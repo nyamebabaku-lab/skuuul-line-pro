@@ -2,16 +2,16 @@
 -- (only during a trip), and automatic notifications to parents: bus left school, about 5 minutes from your stop,
 -- got on the bus, dropped off. Locations are kept 30 days.
 
-alter table edunexa.profiles drop constraint if exists profiles_role_check;
-alter table edunexa.profiles add constraint profiles_role_check check (role in ('superadmin', 'admin', 'headteacher', 'teacher', 'accountant',
+alter table skuuulline.profiles drop constraint if exists profiles_role_check;
+alter table skuuulline.profiles add constraint profiles_role_check check (role in ('superadmin', 'admin', 'headteacher', 'teacher', 'accountant',
   'librarian', 'storekeeper', 'transport', 'driver', 'attendant', 'canteen', 'hostel', 'staff', 'kiosk', 'parent', 'student'));
 
-create or replace function edunexa.join_school(code text, member_role text, full_name text, phone text default null, admission_no text default null)
-returns edunexa.profiles language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.join_school(code text, member_role text, full_name text, phone text default null, admission_no text default null)
+returns skuuulline.profiles language plpgsql security definer set search_path = skuuulline as $$
 declare s schools; stu records; p profiles; cls text;
 begin
   if auth.uid() is null then raise exception 'Sign in first'; end if;
-  if exists (select 1 from profiles where user_id = auth.uid()) then raise exception 'This account is already registered with EduNexa'; end if;
+  if exists (select 1 from profiles where user_id = auth.uid()) then raise exception 'This account is already registered with Skuuul-Line Pro'; end if;
   if member_role not in ('admin', 'headteacher', 'teacher', 'accountant', 'librarian', 'storekeeper', 'transport', 'canteen', 'hostel', 'staff', 'kiosk', 'driver', 'attendant', 'parent', 'student') then
     raise exception 'Choose a valid role';
   end if;
@@ -37,8 +37,8 @@ begin
   return p;
 end $$;
 
-create or replace function edunexa.link_account(t edunexa.profiles) returns text
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.link_account(t skuuulline.profiles) returns text
+language plpgsql security definer set search_path = skuuulline as $$
 declare link text; stu records; first text; last text; label text; n int;
 begin
   if t.linked_id is not null or t.role in ('superadmin', 'admin', 'kiosk') then return t.linked_id; end if;
@@ -58,19 +58,19 @@ begin
     if link is null then link := short_id('par'); end if;
     insert into records (school_id, col, id, data) values (t.school_id, 'parents', link, jsonb_build_object(
       'id', link, 'title', '', 'firstName', first, 'lastName', coalesce(last, ''), 'gender', '', 'relation', 'Parent',
-      'phone', coalesce(t.phone, ''), 'altPhone', '', 'email', case when t.email like '%@phone.edunexa.app' then '' else coalesce(t.email, '') end,
+      'phone', coalesce(t.phone, ''), 'altPhone', '', 'email', case when t.email like '%@phone.skuuulline.app' then '' else coalesce(t.email, '') end,
       'occupation', '', 'address', ''))
     on conflict (school_id, col, id) do update set data = records.data || jsonb_build_object(
       'firstName', first, 'lastName', coalesce(last, ''),
       'phone', coalesce(nullif(t.phone, ''), records.data->>'phone', ''),
-      'email', case when t.email like '%@phone.edunexa.app' then coalesce(records.data->>'email', '') else coalesce(t.email, records.data->>'email', '') end);
+      'email', case when t.email like '%@phone.skuuulline.app' then coalesce(records.data->>'email', '') else coalesce(t.email, records.data->>'email', '') end);
     perform attach_parent(t.school_id, stu.id, link);
     return link;
   end if;
   if t.role = 'student' then return t.match_id; end if;
   -- staff roles
   select id into link from records where school_id = t.school_id and col = 'staff' and (
-    (t.email is not null and t.email not like '%@phone.edunexa.app' and lower(data->>'email') = lower(t.email))
+    (t.email is not null and t.email not like '%@phone.skuuulline.app' and lower(data->>'email') = lower(t.email))
     or (length(regexp_replace(coalesce(t.phone, ''), '\D', '', 'g')) >= 9
         and right(regexp_replace(coalesce(data->>'phone', ''), '\D', '', 'g'), 9) = right(regexp_replace(t.phone, '\D', '', 'g'), 9)))
     and not exists (select 1 from profiles o where o.school_id = t.school_id and o.linked_id = records.id and o.user_id <> t.user_id)
@@ -84,15 +84,15 @@ begin
   insert into records (school_id, col, id, data) values (t.school_id, 'staff', link, jsonb_build_object(
     'id', link, 'staffNo', school_initials(t.school_id) || '/ST/' || lpad(n::text, 3, '0'), 'title', '', 'firstName', first, 'lastName', coalesce(last, ''),
     'gender', '', 'role', label, 'department', case when t.role in ('teacher', 'headteacher') then 'Academic' when t.role in ('driver', 'attendant') then 'Transport' else label end,
-    'phone', coalesce(t.phone, ''), 'email', case when t.email like '%@phone.edunexa.app' then '' else coalesce(t.email, '') end,
+    'phone', coalesce(t.phone, ''), 'email', case when t.email like '%@phone.skuuulline.app' then '' else coalesce(t.email, '') end,
     'qualification', '', 'salary', 0, 'allowances', 0, 'dateJoined', to_char(now(), 'YYYY-MM-DD'), 'status', 'Active',
     'ssnitNo', '', 'bank', '', 'accountNo', ''));
   return link;
 end $$;
 
-create table if not exists edunexa.bus_positions (
+create table if not exists skuuulline.bus_positions (
   id bigint generated always as identity primary key,
-  school_id uuid not null references edunexa.schools on delete cascade,
+  school_id uuid not null references skuuulline.schools on delete cascade,
   trip_id text not null,
   bus_id text,
   user_id uuid references auth.users on delete set null,
@@ -103,28 +103,28 @@ create table if not exists edunexa.bus_positions (
   accuracy real,
   at timestamptz not null default now()
 );
-create index if not exists bus_positions_trip on edunexa.bus_positions (school_id, trip_id, at desc);
-alter table edunexa.bus_positions enable row level security; -- read and written only through the functions below
-grant all on edunexa.bus_positions to service_role;
+create index if not exists bus_positions_trip on skuuulline.bus_positions (school_id, trip_id, at desc);
+alter table skuuulline.bus_positions enable row level security; -- read and written only through the functions below
+grant all on skuuulline.bus_positions to service_role;
 
 -- Distance in metres.
-create or replace function edunexa.metres(lat1 double precision, lng1 double precision, lat2 double precision, lng2 double precision)
+create or replace function skuuulline.metres(lat1 double precision, lng1 double precision, lat2 double precision, lng2 double precision)
 returns double precision language sql immutable as $$
   select 6371000 * 2 * asin(sqrt(power(sin(radians(lat2 - lat1) / 2), 2) + cos(radians(lat1)) * cos(radians(lat2)) * power(sin(radians(lng2 - lng1) / 2), 2)));
 $$;
 
 -- Parents of the active students on a route (optionally only those at one stop).
-create or replace function edunexa.route_families(sid uuid, route_id text, stop_id text default null) returns uuid[]
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.route_families(sid uuid, route_id text, stop_id text default null) returns uuid[]
+language sql stable security definer set search_path = skuuulline as $$
   select coalesce(array_agg(distinct u), '{}') from records s, lateral unnest(family_of(sid, s.id, false)) u
   where s.school_id = sid and s.col = 'students' and s.data->>'busRouteId' = route_id and coalesce(s.data->>'status', 'Active') = 'Active'
     and (stop_id is null or s.data->>'busStopId' = stop_id);
 $$;
 
 -- The bus crew's phones send the bus position while a trip is running (every ~15 s).
-create or replace function edunexa.post_position(trip_id text, lat double precision, lng double precision,
+create or replace function skuuulline.post_position(trip_id text, lat double precision, lng double precision,
   speed real default null, heading real default null, accuracy real default null) returns jsonb
-language plpgsql security definer set search_path = edunexa as $$
+language plpgsql security definer set search_path = skuuulline as $$
 declare me profiles; trip records; route records; st jsonb; d double precision; v double precision; reach double precision; n int := 0;
 begin
   select * into me from profiles where user_id = auth.uid() and status = 'active';
@@ -157,8 +157,8 @@ end $$;
 
 -- What the caller may see right now: running trips (with the latest position) and the crew contacts of their routes.
 -- Parents: only their children's routes. Transport manager, Head Teacher, Owner/Admin, crew: every route.
-create or replace function edunexa.transport_view() returns jsonb
-language plpgsql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.transport_view() returns jsonb
+language plpgsql stable security definer set search_path = skuuulline as $$
 declare me profiles; routes text[]; staffwide boolean;
 begin
   select * into me from profiles where user_id = auth.uid() and status = 'active';
@@ -188,8 +188,8 @@ begin
 end $$;
 
 -- Trips: tell parents when the afternoon bus leaves, and when their child gets on or is dropped off.
-create or replace function edunexa.trip_notify() returns trigger
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.trip_notify() returns trigger
+language plpgsql security definer set search_path = skuuulline as $$
 declare sid uuid := new.school_id; k text; o jsonb; n jsonb; who text; route text; stopname text; was text := null; before jsonb := '{}';
 begin
   route := coalesce(new.data->>'routeName', 'The school bus');
@@ -218,9 +218,9 @@ begin
 exception when others then
   return null; -- never block the trip log
 end $$;
-drop trigger if exists records_trip_notify on edunexa.records;
-create trigger records_trip_notify after insert or update on edunexa.records
-  for each row when (new.col = 'trips') execute function edunexa.trip_notify();
+drop trigger if exists records_trip_notify on skuuulline.records;
+create trigger records_trip_notify after insert or update on skuuulline.records
+  for each row when (new.col = 'trips') execute function skuuulline.trip_notify();
 
-grant execute on function edunexa.post_position(text, double precision, double precision, real, real, real), edunexa.transport_view() to authenticated;
-revoke execute on function edunexa.route_families(uuid, text, text), edunexa.trip_notify(), edunexa.link_account(edunexa.profiles) from public, anon, authenticated;
+grant execute on function skuuulline.post_position(text, double precision, double precision, real, real, real), skuuulline.transport_view() to authenticated;
+revoke execute on function skuuulline.route_families(uuid, text, text), skuuulline.trip_notify(), skuuulline.link_account(skuuulline.profiles) from public, anon, authenticated;

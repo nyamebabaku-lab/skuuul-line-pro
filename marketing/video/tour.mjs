@@ -1,4 +1,4 @@
-// EduNexa "What's new" tour video: drives the demo app with a visible pointer and on-screen captions, recorded by Playwright.
+// Skuuul-Line Pro "What's new" tour video: drives the demo app with a visible pointer and on-screen captions, recorded by Playwright.
 import { chromium } from 'playwright-core';
 import { mkdirSync, readdirSync, renameSync } from 'fs';
 const BASE = 'http://localhost:4173/demo/';
@@ -92,7 +92,7 @@ async function type(loc, text, pause = 300) {
 }
 const dlg = () => p.getByRole('dialog').last();
 async function as(label) {
-  await p.evaluate(() => { const k = 'edunexa-session'; const c = JSON.parse(localStorage.getItem(k) || '{"state":{}}'); c.state.userId = null; localStorage.setItem(k, JSON.stringify(c)); });
+  await p.evaluate(() => { const k = 'skuuulline-session'; const c = JSON.parse(localStorage.getItem(k) || '{"state":{}}'); c.state.userId = null; localStorage.setItem(k, JSON.stringify(c)); });
   await p.goto(BASE + '#/');
   await p.reload();
   await wait(700);
@@ -113,7 +113,7 @@ const LOGO = '<svg width="96" height="96" viewBox="0 0 100 100"><defs><linearGra
 
 // ---------------------------------------------------------------- intro
 await p.goto(BASE);
-await card(`${LOGO}<h1>Edu<b>Nexa</b> — what's new</h1><p>The complete school app for Ghanaian schools</p><ul><li>Live school bus tracking</li><li>Exam timetables</li><li>Smart timetables</li><li>Fair, flexible billing</li><li>Parents link their own children</li><li>Teacher-only marks & live classes</li></ul>`);
+await card(`${LOGO}<h1>Skuuul-Line <b>Pro</b> — what's new</h1><p>The complete school app for Ghanaian schools</p><ul><li>Live school bus tracking</li><li>Exam timetables</li><li>Smart timetables</li><li>Fair, flexible billing</li><li>Parents link their own children</li><li>Teacher-only marks & live classes</li></ul>`);
 await wait(5200);
 await card(null);
 await wait(800);
@@ -265,7 +265,7 @@ await wait(6000);
 
 // ---------------------------------------------------------------- outro
 await nocap();
-await card(`${LOGO}<h1>Edu<b>Nexa</b></h1><p>Try the demo: <b style="color:#fff">nyamebabaku-lab.github.io/edunexa/demo</b></p><p>Android app for schools · parents · teachers · staff</p><ul><li>Gate kiosk ticks class registers</li><li>Parents join with the admission number</li><li>Two guardians per child</li></ul>`);
+await card(`${LOGO}<h1>Skuuul-Line <b>Pro</b></h1><p>Try the demo: <b style="color:#fff">nyamebabaku-lab.github.io/skuuul-line-pro/demo</b></p><p>Android app for schools · parents · teachers · staff</p><ul><li>Gate kiosk ticks class registers</li><li>Parents join with the admission number</li><li>Two guardians per child</li></ul>`);
 await wait(5500);
 await ctx.close();
 await b.close();

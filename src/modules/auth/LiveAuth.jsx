@@ -81,7 +81,7 @@ function Brand({ dark }) {
     <div className="relative flex items-center gap-2.5">
       <LogoMark className="h-10 w-10" />
       <div className="leading-none">
-        <p className={cx('text-lg font-extrabold tracking-tight', dark ? 'text-white' : 'text-slate-900 dark:text-white')}>Edu<span className="text-accent-500">Nexa</span></p>
+        <p className={cx('text-lg font-extrabold tracking-tight', dark ? 'text-white' : 'text-slate-900 dark:text-white')}>Skuuul-Line <span className="text-accent-500">Pro</span></p>
         <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[.18em] text-slate-400">{ADMIN_APP ? 'Admin' : 'School Suite'}</p>
       </div>
     </div>
@@ -93,7 +93,7 @@ function Footer() {
   return (
     <div className="mx-auto flex w-full max-w-md flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-slate-500">
       <a href={ADMIN_APP ? ADMIN_APK_URL : APK_URL} className="flex items-center gap-1.5 font-semibold text-brand-600 hover:underline"><Download className="h-3.5 w-3.5" /> Get the Android app</a>
-      <a href={ADMIN_APP ? SITE : ADMIN_SITE} className="hover:underline">{ADMIN_APP ? 'Teachers, parents & students app' : 'School owner? Open EduNexa Admin'}</a>
+      <a href={ADMIN_APP ? SITE : ADMIN_SITE} className="hover:underline">{ADMIN_APP ? 'Teachers, parents & students app' : 'School owner? Open Skuuul-Line Pro Admin'}</a>
     </div>
   );
 }
@@ -130,8 +130,8 @@ function SignIn({ go }) {
   };
   return (
     <>
-      <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{ADMIN_APP ? 'EduNexa Admin' : 'Welcome back'}</h2>
-      <p className="mt-2 text-slate-500">{ADMIN_APP ? 'For school owners / administrators and the EduNexa Super Admin.' : 'Sign in with the email or phone number you registered with.'}</p>
+      <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{ADMIN_APP ? 'Skuuul-Line Pro Admin' : 'Welcome back'}</h2>
+      <p className="mt-2 text-slate-500">{ADMIN_APP ? 'For school owners / administrators and the Skuuul-Line Pro Super Admin.' : 'Sign in with the email or phone number you registered with.'}</p>
       <form onSubmit={submit} className="mt-8 space-y-4">
         <Field label="Email or phone number"><Input value={id} onChange={(e) => setId(e.target.value)} placeholder="you@email.com or 024 123 4567" autoComplete="username" autoFocus /></Field>
         <Field label="Password"><PasswordInput value={pw} onChange={(e) => setPw(e.target.value)} /></Field>
@@ -140,13 +140,13 @@ function SignIn({ go }) {
       </form>
       <p className="mt-3 text-center text-xs text-slate-500">Forgot your password? Ask your school's Owner/Admin to reset it.</p>
       <div className="mt-8 rounded-2xl border border-slate-200 p-4 dark:border-white/10">
-        <p className="text-sm font-semibold text-slate-800 dark:text-white">{ADMIN_APP ? 'New school?' : 'New to EduNexa?'}</p>
-        <p className="mt-1 text-sm text-slate-500">{ADMIN_APP ? 'Register your school. EduNexa approves it, then you approve your staff, parents and students.' : 'Get your school code from the school office, then create your account.'}</p>
+        <p className="text-sm font-semibold text-slate-800 dark:text-white">{ADMIN_APP ? 'New school?' : 'New to Skuuul-Line Pro?'}</p>
+        <p className="mt-1 text-sm text-slate-500">{ADMIN_APP ? 'Register your school. Skuuul-Line Pro approves it, then you approve your staff, parents and students.' : 'Get your school code from the school office, then create your account.'}</p>
         <Button variant="secondary" className="mt-3 w-full" icon={ADMIN_APP ? Building2 : UserPlus} onClick={() => go(ADMIN_APP ? 'register' : 'join')}>{ADMIN_APP ? 'Register a school' : 'Create account'}</Button>
         {ADMIN_APP && <Button variant="ghost" size="sm" className="mt-2 w-full" icon={UserPlus} onClick={() => go('join')}>Join an existing school as an administrator</Button>}
       </div>
       {ADMIN_APP && !superExists && (
-        <button onClick={() => go('claim')} className="mt-4 flex w-full items-center justify-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-brand-600"><Crown className="h-3.5 w-3.5" /> Set up the EduNexa Super Admin</button>
+        <button onClick={() => go('claim')} className="mt-4 flex w-full items-center justify-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-brand-600"><Crown className="h-3.5 w-3.5" /> Set up the Skuuul-Line Pro Super Admin</button>
       )}
     </>
   );
@@ -343,7 +343,7 @@ function Register({ go, signedIn }) {
     <>
       <button onClick={() => go('signin')} className="mb-6 flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-brand-600"><ArrowLeft className="h-4 w-4" /> Back</button>
       <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Register your school</h2>
-      <p className="mt-2 text-slate-500">EduNexa reviews and approves new schools. You'll get a school code to share with your staff, parents and students.</p>
+      <p className="mt-2 text-slate-500">Skuuul-Line Pro reviews and approves new schools. You'll get a school code to share with your staff, parents and students.</p>
       <form onSubmit={submit} className="mt-6 space-y-4">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-400">School</p>
         <Field label="School name"><Input value={v.school} onChange={set('school')} placeholder="e.g. Bright Stars Academy" /></Field>
@@ -404,7 +404,7 @@ function Claim({ go, signedIn }) {
   return (
     <>
       <button onClick={() => go('signin')} className="mb-6 flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-brand-600"><ArrowLeft className="h-4 w-4" /> Back</button>
-      <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">EduNexa Super Admin</h2>
+      <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Skuuul-Line Pro Super Admin</h2>
       <p className="mt-2 text-slate-500">One-time set-up for the platform owner. Only the reserved email address can claim this account.</p>
       <form onSubmit={submit} className="mt-6 space-y-4">
         <Field label="Your name"><Input value={v.name} onChange={set('name')} /></Field>
@@ -428,7 +428,7 @@ function SignedInBar() {
   );
 }
 
-/** Signed in, but not part of EduNexa yet (e.g. an account from another app, or sign-up interrupted). */
+/** Signed in, but not part of Skuuul-Line Pro yet (e.g. an account from another app, or sign-up interrupted). */
 function FinishSetup() {
   const superExists = useLive((s) => s.superExists);
   const [view, setView] = useState(ADMIN_APP ? 'choose' : 'join');
@@ -442,7 +442,7 @@ function FinishSetup() {
       <div className="mt-6 space-y-3">
         <Button size="lg" className="w-full" icon={Building2} onClick={() => setView('register')}>Register a school</Button>
         <Button variant="secondary" size="lg" className="w-full" icon={UserPlus} onClick={() => setView('join')}>Join a school as an administrator</Button>
-        {!superExists && <Button variant="ghost" className="w-full" icon={Crown} onClick={() => setView('claim')}>Set up the EduNexa Super Admin</Button>}
+        {!superExists && <Button variant="ghost" className="w-full" icon={Crown} onClick={() => setView('claim')}>Set up the Skuuul-Line Pro Super Admin</Button>}
       </div>
       <SignedInBar />
     </>
@@ -458,10 +458,10 @@ function Waiting() {
     pending: {
       icon: Hourglass, tone: 'amber', title: 'Waiting for approval',
       text: profile.is_owner
-        ? 'EduNexa is reviewing your school. You can sign in as soon as it is approved — usually within one working day.'
+        ? 'Skuuul-Line Pro is reviewing your school. You can sign in as soon as it is approved — usually within one working day.'
         : `${school?.name || 'Your school'}'s Owner/Admin will review your account. This page opens your app as soon as you are approved.`,
     },
-    suspended: { icon: Ban, tone: 'red', title: schoolOff ? 'School suspended' : 'Account suspended', text: schoolOff ? 'This school is suspended on EduNexa. Please contact EduNexa support.' : 'Your account has been suspended. Please contact your school.' },
+    suspended: { icon: Ban, tone: 'red', title: schoolOff ? 'School suspended' : 'Account suspended', text: schoolOff ? 'This school is suspended on Skuuul-Line Pro. Please contact Skuuul-Line Pro support.' : 'Your account has been suspended. Please contact your school.' },
     deactivated: { icon: Ban, tone: 'slate', title: 'Account deactivated', text: 'Your account has been deactivated. Please contact your school if this is a mistake.' },
   }[st] || { icon: Clock, tone: 'amber', title: 'Not available yet', text: 'Please check again later.' };
   const reason = (schoolOff ? school.status_reason : profile.status_reason) || '';
@@ -474,7 +474,7 @@ function Waiting() {
       <Card className="mt-6 space-y-2 p-4 text-sm">
         <p><span className="text-slate-500">Name:</span> <b>{profile.name}</b></p>
         <p><span className="text-slate-500">Role:</span> {ROLES[profile.role]?.label}</p>
-        {school && <p><span className="text-slate-500">School:</span> {school.name}{profile.is_owner && school.status === 'pending' && ' (awaiting EduNexa approval)'}</p>}
+        {school && <p><span className="text-slate-500">School:</span> {school.name}{profile.is_owner && school.status === 'pending' && ' (awaiting Skuuul-Line Pro approval)'}</p>}
         {profile.match_label && <p><span className="text-slate-500">{profile.role === 'parent' ? 'Child' : 'Student record'}:</span> {profile.match_label}</p>}
         {profile.is_owner && school?.code && <p><span className="text-slate-500">Your school code:</span> <span className="font-mono font-bold">{school.code}</span> — staff and parents can sign up now and you approve them once your school is live.</p>}
       </Card>
@@ -489,15 +489,15 @@ function WrongApp() {
   const admin = profile.role === 'admin' || profile.role === 'superadmin';
   return (
     <>
-      <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Use the {admin ? 'EduNexa Admin' : 'EduNexa'} app</h2>
+      <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Use the {admin ? 'Skuuul-Line Pro Admin' : 'Skuuul-Line Pro'} app</h2>
       <p className="mt-2 text-slate-500">
         {admin
-          ? 'School Owner/Admin and Super Admin accounts sign in to EduNexa Admin, where you manage your school and approve accounts.'
-          : `Your ${ROLES[profile.role]?.label} account signs in to the EduNexa app (EduNexa Admin is only for school owners).`}
+          ? 'School Owner/Admin and Super Admin accounts sign in to Skuuul-Line Pro Admin, where you manage your school and approve accounts.'
+          : `Your ${ROLES[profile.role]?.label} account signs in to the Skuuul-Line Pro app (Skuuul-Line Pro Admin is only for school owners).`}
       </p>
       {!IS_NATIVE && (
         <div className="mt-6 space-y-3">
-          <a href={admin ? ADMIN_SITE : SITE}><Button size="lg" className="w-full" icon={ArrowRight}>Open {admin ? 'EduNexa Admin' : 'EduNexa'} on the web</Button></a>
+          <a href={admin ? ADMIN_SITE : SITE}><Button size="lg" className="w-full" icon={ArrowRight}>Open {admin ? 'Skuuul-Line Pro Admin' : 'Skuuul-Line Pro'} on the web</Button></a>
           <a href={admin ? ADMIN_APK_URL : APK_URL}><Button variant="secondary" className="mt-3 w-full" icon={Download}>Download the Android app</Button></a>
         </div>
       )}

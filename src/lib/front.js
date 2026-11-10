@@ -1,10 +1,10 @@
-// The front-page picture: EduNexa's default school photo, or the one a school's Owner uploads (Settings → Branding).
+// The front-page picture: Skuuul-Line Pro's default school photo, or the one a school's Owner uploads (Settings → Branding).
 // It is blended into the sign-in page and the dashboard greeting with the school's own colours.
 // The last school signed in on this device is remembered, so its picture greets people even before they sign in.
 import { storeKey } from '../config';
 
 export const DEFAULT_FRONT = `${import.meta.env.BASE_URL}front.jpg`;
-const KEY = storeKey('edunexa-front');
+const KEY = storeKey('skuuulline-front');
 
 /** Picture, name and logo of the last school used on this device (or null). */
 export function rememberedSchool() {

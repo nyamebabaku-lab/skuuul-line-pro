@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { hooks } from './store';
 import { storeKey } from '../config';
 
-const DB_NAME = storeKey('edunexa-media');
+const DB_NAME = storeKey('skuuulline-media');
 const STORE = 'photos';
 
 let dbp;
@@ -51,7 +51,7 @@ export async function loadPhotos() {
   }
 }
 
-const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('edunexa-photos') : null;
+const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('skuuulline-photos') : null;
 channel?.addEventListener('message', () => loadPhotos());
 
 export async function savePhoto(key, dataUrl, { local = false } = {}) {

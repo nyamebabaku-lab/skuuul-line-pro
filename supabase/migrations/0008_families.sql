@@ -1,10 +1,10 @@
 -- 0008: families. Parents come from their own accounts; a child can have two parent accounts (parentId, parentId2);
 -- a parent links more children from the portal (admission number + date of birth), approved by the school.
 
-create index if not exists records_parent2 on edunexa.records (school_id, (data->>'parentId2')) where col = 'students';
+create index if not exists records_parent2 on skuuulline.records (school_id, (data->>'parentId2')) where col = 'students';
 
 -- Children a parent may see: either guardian slot.
-create or replace function edunexa.my_students() returns text[] language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.my_students() returns text[] language sql stable security definer set search_path = skuuulline as $$
   select case p.role
     when 'student' then array[p.linked_id]
     when 'parent' then coalesce((select array_agg(r.id) from records r where r.school_id = p.school_id and r.col = 'students'
@@ -14,16 +14,16 @@ create or replace function edunexa.my_students() returns text[] language sql sta
 $$;
 
 -- Notifications go to both guardians.
-create or replace function edunexa.family_of(sid uuid, student_id text, with_student boolean default true) returns uuid[]
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.family_of(sid uuid, student_id text, with_student boolean default true) returns uuid[]
+language sql stable security definer set search_path = skuuulline as $$
   select coalesce(array_agg(p.user_id), '{}') from profiles p
   where p.school_id = sid and p.status = 'active' and (
     (p.role = 'parent' and p.linked_id in (select x from records r, lateral (values (r.data->>'parentId'), (r.data->>'parentId2')) v(x)
                                            where r.school_id = sid and r.col = 'students' and r.id = student_id and x is not null))
     or (with_student and p.role = 'student' and p.linked_id = student_id));
 $$;
-create or replace function edunexa.class_families(sid uuid, class_id text) returns uuid[]
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.class_families(sid uuid, class_id text) returns uuid[]
+language sql stable security definer set search_path = skuuulline as $$
   select coalesce(array_agg(distinct p.user_id), '{}') from records s
   join profiles p on p.school_id = sid and p.status = 'active'
     and ((p.role = 'student' and p.linked_id = s.id)
@@ -32,15 +32,15 @@ language sql stable security definer set search_path = edunexa as $$
 $$;
 
 -- Does another (not deactivated) parent account use this parent record?
-create or replace function edunexa.parent_has_account(sid uuid, pid text, except_user uuid default null) returns boolean
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.parent_has_account(sid uuid, pid text, except_user uuid default null) returns boolean
+language sql stable security definer set search_path = skuuulline as $$
   select exists (select 1 from profiles where school_id = sid and role = 'parent' and linked_id = pid
                  and status <> 'deactivated' and user_id is distinct from except_user);
 $$;
 
 -- Puts a parent on a child: the first free guardian slot (empty, or a parent record nobody has an account on).
-create or replace function edunexa.attach_parent(sid uuid, student_id text, pid text) returns text
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.attach_parent(sid uuid, student_id text, pid text) returns text
+language plpgsql security definer set search_path = skuuulline as $$
 declare stu records; slot text;
 begin
   select * into stu from records where school_id = sid and col = 'students' and id = student_id for update;
@@ -54,8 +54,8 @@ begin
   return slot;
 end $$;
 
-create or replace function edunexa.link_account(t edunexa.profiles) returns text
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.link_account(t skuuulline.profiles) returns text
+language plpgsql security definer set search_path = skuuulline as $$
 declare link text; stu records; first text; last text; label text; n int;
 begin
   if t.linked_id is not null or t.role in ('superadmin', 'admin', 'kiosk') then return t.linked_id; end if;
@@ -75,19 +75,19 @@ begin
     if link is null then link := short_id('par'); end if;
     insert into records (school_id, col, id, data) values (t.school_id, 'parents', link, jsonb_build_object(
       'id', link, 'title', '', 'firstName', first, 'lastName', coalesce(last, ''), 'gender', '', 'relation', 'Parent',
-      'phone', coalesce(t.phone, ''), 'altPhone', '', 'email', case when t.email like '%@phone.edunexa.app' then '' else coalesce(t.email, '') end,
+      'phone', coalesce(t.phone, ''), 'altPhone', '', 'email', case when t.email like '%@phone.skuuulline.app' then '' else coalesce(t.email, '') end,
       'occupation', '', 'address', ''))
     on conflict (school_id, col, id) do update set data = records.data || jsonb_build_object(
       'firstName', first, 'lastName', coalesce(last, ''),
       'phone', coalesce(nullif(t.phone, ''), records.data->>'phone', ''),
-      'email', case when t.email like '%@phone.edunexa.app' then coalesce(records.data->>'email', '') else coalesce(t.email, records.data->>'email', '') end);
+      'email', case when t.email like '%@phone.skuuulline.app' then coalesce(records.data->>'email', '') else coalesce(t.email, records.data->>'email', '') end);
     perform attach_parent(t.school_id, stu.id, link);
     return link;
   end if;
   if t.role = 'student' then return t.match_id; end if;
   -- staff roles
   select id into link from records where school_id = t.school_id and col = 'staff' and (
-    (t.email is not null and t.email not like '%@phone.edunexa.app' and lower(data->>'email') = lower(t.email))
+    (t.email is not null and t.email not like '%@phone.skuuulline.app' and lower(data->>'email') = lower(t.email))
     or (length(regexp_replace(coalesce(t.phone, ''), '\D', '', 'g')) >= 9
         and right(regexp_replace(coalesce(data->>'phone', ''), '\D', '', 'g'), 9) = right(regexp_replace(t.phone, '\D', '', 'g'), 9)))
     and not exists (select 1 from profiles o where o.school_id = t.school_id and o.linked_id = records.id and o.user_id <> t.user_id)
@@ -101,14 +101,14 @@ begin
   insert into records (school_id, col, id, data) values (t.school_id, 'staff', link, jsonb_build_object(
     'id', link, 'staffNo', school_initials(t.school_id) || '/ST/' || lpad(n::text, 3, '0'), 'title', '', 'firstName', first, 'lastName', coalesce(last, ''),
     'gender', '', 'role', label, 'department', case when t.role in ('teacher', 'headteacher') then 'Academic' else label end,
-    'phone', coalesce(t.phone, ''), 'email', case when t.email like '%@phone.edunexa.app' then '' else coalesce(t.email, '') end,
+    'phone', coalesce(t.phone, ''), 'email', case when t.email like '%@phone.skuuulline.app' then '' else coalesce(t.email, '') end,
     'qualification', '', 'salary', 0, 'allowances', 0, 'dateJoined', to_char(now(), 'YYYY-MM-DD'), 'status', 'Active',
     'ssnitNo', '', 'bank', '', 'accountNo', ''));
   return link;
 end $$;
 
 -- A third parent account for the same child is refused when signing up.
-create or replace function edunexa.join_guard() returns trigger language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.join_guard() returns trigger language plpgsql security definer set search_path = skuuulline as $$
 declare stu records;
 begin
   if new.role = 'parent' and new.match_id is not null then
@@ -120,14 +120,14 @@ begin
   end if;
   return new;
 end $$;
-drop trigger if exists profiles_join_guard on edunexa.profiles;
-create trigger profiles_join_guard before insert on edunexa.profiles for each row execute function edunexa.join_guard();
+drop trigger if exists profiles_join_guard on skuuulline.profiles;
+create trigger profiles_join_guard before insert on skuuulline.profiles for each row execute function skuuulline.join_guard();
 
 -- ---------------------------------------------------------------- linking more children from the parent portal
-create table if not exists edunexa.child_requests (
+create table if not exists skuuulline.child_requests (
   id bigint generated always as identity primary key,
   created_at timestamptz not null default now(),
-  school_id uuid not null references edunexa.schools on delete cascade,
+  school_id uuid not null references skuuulline.schools on delete cascade,
   user_id uuid not null references auth.users on delete cascade,
   student_id text not null,
   label text,
@@ -136,23 +136,23 @@ create table if not exists edunexa.child_requests (
   decided_by uuid,
   decided_at timestamptz
 );
-create index if not exists child_requests_school on edunexa.child_requests (school_id, status);
-alter table edunexa.child_requests enable row level security;
-drop policy if exists child_requests_read on edunexa.child_requests;
-create policy child_requests_read on edunexa.child_requests for select to authenticated
-  using (user_id = auth.uid() or (school_id = edunexa.my_school() and edunexa.my_role() in ('admin', 'headteacher')));
-grant select on edunexa.child_requests to authenticated;
-grant all on edunexa.child_requests to service_role;
+create index if not exists child_requests_school on skuuulline.child_requests (school_id, status);
+alter table skuuulline.child_requests enable row level security;
+drop policy if exists child_requests_read on skuuulline.child_requests;
+create policy child_requests_read on skuuulline.child_requests for select to authenticated
+  using (user_id = auth.uid() or (school_id = skuuulline.my_school() and skuuulline.my_role() in ('admin', 'headteacher')));
+grant select on skuuulline.child_requests to authenticated;
+grant all on skuuulline.child_requests to service_role;
 do $$ begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
-     and not exists (select 1 from pg_publication_tables where schemaname = 'edunexa' and tablename = 'child_requests') then
-    alter publication supabase_realtime add table edunexa.child_requests;
+     and not exists (select 1 from pg_publication_tables where schemaname = 'skuuulline' and tablename = 'child_requests') then
+    alter publication supabase_realtime add table skuuulline.child_requests;
   end if;
 end $$;
 
 -- Parent asks to link another child: admission number + the child's date of birth. Wrong dates count as failed tries (5 a day).
-create or replace function edunexa.request_child(admission_no text, dob text) returns edunexa.child_requests
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.request_child(admission_no text, dob text) returns skuuulline.child_requests
+language plpgsql security definer set search_path = skuuulline as $$
 declare me profiles; stu records; cls text; r child_requests; lbl text;
 begin
   select * into me from profiles where user_id = auth.uid() and status = 'active' and role = 'parent';
@@ -184,8 +184,8 @@ begin
 end $$;
 
 -- The Owner/Admin or Head Teacher approves or declines.
-create or replace function edunexa.decide_child_request(request_id bigint, approve boolean) returns edunexa.child_requests
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.decide_child_request(request_id bigint, approve boolean) returns skuuulline.child_requests
+language plpgsql security definer set search_path = skuuulline as $$
 declare r child_requests; par profiles;
 begin
   select * into r from child_requests where id = request_id for update;
@@ -208,12 +208,12 @@ begin
   return r;
 end $$;
 
-grant execute on function edunexa.request_child(text, text), edunexa.decide_child_request(bigint, boolean) to authenticated;
+grant execute on function skuuulline.request_child(text, text), skuuulline.decide_child_request(bigint, boolean) to authenticated;
 
 -- Internal helpers: only the database's own functions and triggers may use them (not the apps directly).
-revoke execute on function edunexa.link_account(edunexa.profiles), edunexa.attach_parent(uuid, text, text),
-  edunexa.parent_has_account(uuid, text, uuid), edunexa.join_guard(),
-  edunexa.notify(uuid[], uuid, text, text, text, text, text), edunexa.audit(text, text, uuid),
-  edunexa.family_of(uuid, text, boolean), edunexa.class_families(uuid, text), edunexa.school_members(uuid, text[]),
-  edunexa.student_first(uuid, text)
+revoke execute on function skuuulline.link_account(skuuulline.profiles), skuuulline.attach_parent(uuid, text, text),
+  skuuulline.parent_has_account(uuid, text, uuid), skuuulline.join_guard(),
+  skuuulline.notify(uuid[], uuid, text, text, text, text, text), skuuulline.audit(text, text, uuid),
+  skuuulline.family_of(uuid, text, boolean), skuuulline.class_families(uuid, text), skuuulline.school_members(uuid, text[]),
+  skuuulline.student_first(uuid, text)
   from public, anon, authenticated;

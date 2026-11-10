@@ -1,8 +1,8 @@
 -- 0010: only a live class's own teacher can start it, end it or record its attendance.
 -- The Owner/Admin and Head Teacher can still schedule, edit, reassign (before it starts) and delete classes;
 -- students and others can never change whether a class is live.
-create or replace function edunexa.live_host_guard() returns trigger
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.live_host_guard() returns trigger
+language plpgsql security definer set search_path = skuuulline as $$
 declare me text := my_link(); teacher text;
 begin
   if new.col <> 'liveSessions' or is_super() then return new; end if;
@@ -26,7 +26,7 @@ begin
   end if;
   return new;
 end $$;
-drop trigger if exists records_live_host on edunexa.records;
-create trigger records_live_host before insert or update on edunexa.records
-  for each row when (new.col = 'liveSessions') execute function edunexa.live_host_guard();
-revoke execute on function edunexa.live_host_guard() from public, anon, authenticated;
+drop trigger if exists records_live_host on skuuulline.records;
+create trigger records_live_host before insert or update on skuuulline.records
+  for each row when (new.col = 'liveSessions') execute function skuuulline.live_host_guard();
+revoke execute on function skuuulline.live_host_guard() from public, anon, authenticated;

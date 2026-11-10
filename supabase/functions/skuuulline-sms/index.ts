@@ -1,6 +1,6 @@
-// EduNexa SMS via mNotify — each school uses its own mNotify API key and sender ID (edunexa.sms_settings).
+// Skuuul-Line Pro SMS via mNotify — each school uses its own mNotify API key and sender ID (skuuulline.sms_settings).
 // Keys never leave the server. Only active staff of an active school can send, only to that school's own
-// parents / staff phone numbers, within the school's daily limit. Every message is logged in edunexa.sms_log.
+// parents / staff phone numbers, within the school's daily limit. Every message is logged in skuuulline.sms_log.
 //
 // Actions (POST JSON):
 //   { smsId }                         send the queued smsLog record (written by the app) and mark it Delivered/Failed
@@ -8,7 +8,7 @@
 //   { action: 'balance', schoolId? }  Super Admin / Owner-Admin: mNotify credit for the school's account
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
-const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { db: { schema: 'edunexa' } });
+const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { db: { schema: 'skuuulline' } });
 const SENDERS = ['admin', 'headteacher', 'teacher', 'accountant', 'librarian', 'storekeeper', 'transport', 'canteen', 'hostel', 'staff', 'kiosk'];
 
 const cors = {
@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
     }
     const to = normPhone(body.to);
     if (!to) return reply({ ok: false, error: 'Enter a valid Ghana phone number' }, 400);
-    const message = `EduNexa test: SMS for this school is working. Sender ID ${cfg.sender_id}.`;
+    const message = `Skuuul-Line Pro test: SMS for this school is working. Sender ID ${cfg.sender_id}.`;
     const r = await sendBatch(cfg.api_key, cfg.sender_id, [to], message);
     await db.from('sms_log').insert({ school_id: schoolId, sent_by: me.user_id, to_phone: to, message, status: r.sent ? 'sent' : 'failed', error: r.error });
     return reply({ ok: r.sent, error: r.error }, r.sent ? 200 : 502);
@@ -114,7 +114,7 @@ Deno.serve(async (req) => {
     await db.from('records').update({ data }).eq('school_id', schoolId).eq('col', 'smsLog').eq('id', body.smsId);
     return reply({ ok: status === 'Delivered', status, ...extra });
   };
-  if (!cfg || !cfg.enabled) return finish('Failed', { error: 'SMS is not set up for this school yet — ask EduNexa to connect your mNotify account', delivered: 0 });
+  if (!cfg || !cfg.enabled) return finish('Failed', { error: 'SMS is not set up for this school yet — ask Skuuul-Line Pro to connect your mNotify account', delivered: 0 });
 
   const message = String(sms.message ?? '').trim().slice(0, 612);
   const allowed = await schoolPhones(schoolId);

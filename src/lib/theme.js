@@ -62,7 +62,7 @@ export function applyTheme(theme) {
 }
 
 export function applyBranding(settings) {
-  document.title = `${settings.appName || 'EduNexa'} — ${settings.schoolName}`;
+  document.title = `${settings.appName || 'Skuuul-Line Pro'} — ${settings.schoolName}`;
   const href = settings.logo || './icon.svg';
   let link = document.querySelector('link[rel="icon"]');
   if (!link) {

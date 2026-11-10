@@ -11,7 +11,7 @@ export function makeRoomCode() {
 export const normalizeCode = (c) => (c || '').toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(.{4})(.{4}).*$/, '$1-$2');
 export const isValidCode = (c) => /^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(normalizeCode(c));
 
-const slug = (code) => `edunexa-live-${normalizeCode(code).replace('-', '').toLowerCase()}`;
+const slug = (code) => `skuuulline-live-${normalizeCode(code).replace('-', '').toLowerCase()}`;
 export const hostPeerId = (code) => `${slug(code)}-host`;
 export const guestPeerId = (code) => `${slug(code)}-${Math.random().toString(36).slice(2, 10)}`;
 

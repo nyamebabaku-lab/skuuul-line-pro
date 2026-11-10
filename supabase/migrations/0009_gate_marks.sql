@@ -6,8 +6,8 @@
 -- 2. Marks: a teacher can only save marks for the classes and subjects they are linked to (Classes & Subjects).
 --    The Head Teacher and Owner/Admin can enter any marks.
 
-create or replace function edunexa.gate_register() returns trigger
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.gate_register() returns trigger
+language plpgsql security definer set search_path = skuuulline as $$
 declare stu records; cls text; day text; mark text; rid text;
 begin
   if new.col <> 'clockings' or coalesce(new.data->>'personType', '') <> 'Student' or nullif(new.data->>'in', '') is null then return null; end if;
@@ -28,12 +28,12 @@ begin
 exception when others then
   return null; -- never block a clock-in
 end $$;
-drop trigger if exists records_gate_register on edunexa.records;
-create trigger records_gate_register after insert or update on edunexa.records
-  for each row when (new.col = 'clockings') execute function edunexa.gate_register();
+drop trigger if exists records_gate_register on skuuulline.records;
+create trigger records_gate_register after insert or update on skuuulline.records
+  for each row when (new.col = 'clockings') execute function skuuulline.gate_register();
 
-create or replace function edunexa.teacher_marks_guard() returns trigger
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.teacher_marks_guard() returns trigger
+language plpgsql security definer set search_path = skuuulline as $$
 begin
   if new.col <> 'scores' or my_role() is distinct from 'teacher' then return new; end if;
   if not exists (select 1 from records a where a.school_id = new.school_id and a.col = 'allocations'
@@ -42,8 +42,8 @@ begin
   end if;
   return new;
 end $$;
-drop trigger if exists records_teacher_marks on edunexa.records;
-create trigger records_teacher_marks before insert or update on edunexa.records
-  for each row when (new.col = 'scores') execute function edunexa.teacher_marks_guard();
+drop trigger if exists records_teacher_marks on skuuulline.records;
+create trigger records_teacher_marks before insert or update on skuuulline.records
+  for each row when (new.col = 'scores') execute function skuuulline.teacher_marks_guard();
 
-revoke execute on function edunexa.gate_register(), edunexa.teacher_marks_guard() from public, anon, authenticated;
+revoke execute on function skuuulline.gate_register(), skuuulline.teacher_marks_guard() from public, anon, authenticated;

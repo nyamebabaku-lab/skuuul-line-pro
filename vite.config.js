@@ -6,9 +6,9 @@ import { fileURLToPath } from 'url';
 // Three apps from one codebase (VITE_APP): main → dist/, admin → dist/admin/, demo → dist/demo/.
 const APP = process.env.VITE_APP || 'demo';
 const META = {
-  main: { name: 'EduNexa', short: 'EduNexa', desc: 'Your school app for teachers, parents, students and staff', out: 'dist' },
-  admin: { name: 'EduNexa Admin', short: 'EduNexa Admin', desc: 'Run your school: approve accounts, branding, every module', out: 'dist/admin' },
-  demo: { name: 'EduNexa — Demo', short: 'EduNexa Demo', desc: 'Try EduNexa with a demo school', out: 'dist/demo' },
+  main: { name: 'Skuuul-Line Pro', short: 'Skuuul-Line Pro', desc: 'Your school app for teachers, parents, students and staff', out: 'dist' },
+  admin: { name: 'Skuuul-Line Pro Admin', short: 'Skuuul-Line Pro Admin', desc: 'Run your school: approve accounts, branding, every module', out: 'dist/admin' },
+  demo: { name: 'Skuuul-Line Pro — Demo', short: 'Skuuul-Line Pro Demo', desc: 'Try Skuuul-Line Pro with a demo school', out: 'dist/demo' },
 }[APP];
 
 export default defineConfig({
@@ -22,7 +22,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        id: `edunexa-${APP}`,
+        id: `skuuulline-${APP}`,
         name: META.name,
         short_name: META.short,
         description: META.desc,

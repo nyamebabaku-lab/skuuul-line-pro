@@ -1,8 +1,8 @@
 -- Real SMS through mNotify, one mNotify API key + sender ID per school.
--- Keys are only readable by the edunexa-sms Edge Function (service role); the apps never see them.
+-- Keys are only readable by the skuuulline-sms Edge Function (service role); the apps never see them.
 
-create table if not exists edunexa.sms_settings (
-  school_id uuid primary key references edunexa.schools on delete cascade,
+create table if not exists skuuulline.sms_settings (
+  school_id uuid primary key references skuuulline.schools on delete cascade,
   api_key text not null,
   sender_id text not null check (length(sender_id) between 1 and 11),
   daily_limit int not null default 1000 check (daily_limit > 0),
@@ -10,12 +10,12 @@ create table if not exists edunexa.sms_settings (
   updated_at timestamptz not null default now(),
   updated_by uuid
 );
-alter table edunexa.sms_settings enable row level security; -- no policies: no client can read keys
+alter table skuuulline.sms_settings enable row level security; -- no policies: no client can read keys
 
-create table if not exists edunexa.sms_log (
+create table if not exists skuuulline.sms_log (
   id bigint generated always as identity primary key,
   at timestamptz not null default now(),
-  school_id uuid references edunexa.schools on delete cascade,
+  school_id uuid references skuuulline.schools on delete cascade,
   sent_by uuid,
   sms_id text,
   to_phone text not null,
@@ -23,21 +23,21 @@ create table if not exists edunexa.sms_log (
   status text not null check (status in ('sent', 'failed')),
   error text
 );
-create index if not exists sms_log_school_at on edunexa.sms_log (school_id, at desc);
-alter table edunexa.sms_log enable row level security;
-drop policy if exists sms_log_read on edunexa.sms_log;
-create policy sms_log_read on edunexa.sms_log for select to authenticated
-  using ((select edunexa.is_super()) or edunexa.is_school_admin(school_id));
-grant select on edunexa.sms_log to authenticated;
+create index if not exists sms_log_school_at on skuuulline.sms_log (school_id, at desc);
+alter table skuuulline.sms_log enable row level security;
+drop policy if exists sms_log_read on skuuulline.sms_log;
+create policy sms_log_read on skuuulline.sms_log for select to authenticated
+  using ((select skuuulline.is_super()) or skuuulline.is_school_admin(school_id));
+grant select on skuuulline.sms_log to authenticated;
 
 -- The Edge Function works with the service role.
-grant usage on schema edunexa to service_role;
-grant all on all tables in schema edunexa to service_role;
-grant usage, select on all sequences in schema edunexa to service_role;
+grant usage on schema skuuulline to service_role;
+grant all on all tables in schema skuuulline to service_role;
+grant usage, select on all sequences in schema skuuulline to service_role;
 
 -- Super Admin sets (or clears) a school's mNotify account. A null key keeps the saved key.
-create or replace function edunexa.set_school_sms(sid uuid, api_key text, sender_id text, daily_limit int default 1000, enabled boolean default true)
-returns jsonb language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.set_school_sms(sid uuid, api_key text, sender_id text, daily_limit int default 1000, enabled boolean default true)
+returns jsonb language plpgsql security definer set search_path = skuuulline as $$
 begin
   if not is_super() then raise exception 'Only the Super Admin can set up SMS for a school'; end if;
   if not exists (select 1 from schools where id = sid) then raise exception 'School not found'; end if;
@@ -61,8 +61,8 @@ begin
 end $$;
 
 -- What a school's SMS looks like, without the key (Super Admin, or that school's Owner/Admin).
-create or replace function edunexa.school_sms_status(sid uuid default null) returns jsonb
-language plpgsql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.school_sms_status(sid uuid default null) returns jsonb
+language plpgsql stable security definer set search_path = skuuulline as $$
 declare s sms_settings; target uuid := coalesce(sid, my_school());
 begin
   if not (is_super() or is_school_admin(target)) then raise exception 'Not allowed'; end if;
@@ -79,11 +79,11 @@ begin
 end $$;
 
 -- For the Schools page: which schools have SMS.
-create or replace function edunexa.sms_overview() returns jsonb language plpgsql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.sms_overview() returns jsonb language plpgsql stable security definer set search_path = skuuulline as $$
 begin
   if not is_super() then raise exception 'Not allowed'; end if;
   return coalesce((select jsonb_object_agg(school_id, jsonb_build_object('senderId', sender_id, 'enabled', enabled)) from sms_settings), '{}');
 end $$;
 
-revoke execute on function edunexa.set_school_sms(uuid, text, text, int, boolean), edunexa.school_sms_status(uuid), edunexa.sms_overview() from public;
-grant execute on function edunexa.set_school_sms(uuid, text, text, int, boolean), edunexa.school_sms_status(uuid), edunexa.sms_overview() to authenticated;
+revoke execute on function skuuulline.set_school_sms(uuid, text, text, int, boolean), skuuulline.school_sms_status(uuid), skuuulline.sms_overview() from public;
+grant execute on function skuuulline.set_school_sms(uuid, text, text, int, boolean), skuuulline.school_sms_status(uuid), skuuulline.sms_overview() to authenticated;

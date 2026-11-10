@@ -101,8 +101,8 @@ export default function App() {
   // Keep tabs on the same device in sync (e.g. the gate kiosk and a phone-view tab).
   useEffect(() => {
     const h = (e) => {
-      if (e.key === storeKey('edunexa-db')) useDB.persist.rehydrate();
-      if (e.key === storeKey('edunexa-session')) useSession.persist.rehydrate();
+      if (e.key === storeKey('skuuulline-db')) useDB.persist.rehydrate();
+      if (e.key === storeKey('skuuulline-session')) useSession.persist.rehydrate();
     };
     window.addEventListener('storage', h);
     return () => window.removeEventListener('storage', h);

@@ -1,6 +1,6 @@
 1
 00:00:09,174 --> 00:00:19,587
-Akwaaba! Welcome to EduNexa, the complete management system for Bright Future International School — from Creche all the way to Diploma.
+Akwaaba! Welcome to Skuuul-Line Pro, the complete management system for Bright Future International School — from Creche all the way to Diploma.
 
 2
 00:00:19,737 --> 00:00:33,306
@@ -328,7 +328,7 @@ And the Users tab approves new parent accounts and resets passwords.
 
 83
 00:12:18,304 --> 00:12:24,270
-EduNexa keeps working even when the internet goes off.
+Skuuul-Line Pro keeps working even when the internet goes off.
 
 84
 00:12:24,420 --> 00:12:33,386
@@ -344,7 +344,7 @@ Text messages sent while offline wait in a queue…
 
 87
 00:12:49,256 --> 00:12:55,481
-On a phone, EduNexa looks and feels like an app, with a bottom menu.
+On a phone, Skuuul-Line Pro looks and feels like an app, with a bottom menu.
 
 88
 00:12:55,631 --> 00:13:05,692

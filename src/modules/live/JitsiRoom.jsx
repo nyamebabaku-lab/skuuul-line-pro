@@ -26,7 +26,7 @@ export default function JitsiRoom({ code, session, isHost, me, onExit }) {
   useEffect(() => {
     let api;
     const domain = live.jaasAppId ? '8x8.vc' : live.jitsiDomain || 'meet.jit.si';
-    const room = `EduNexa${code.replace('-', '')}${db.settings.schoolName.replace(/[^A-Za-z]/g, '').slice(0, 12)}`;
+    const room = `Skuuul-Line Pro${code.replace('-', '')}${db.settings.schoolName.replace(/[^A-Za-z]/g, '').slice(0, 12)}`;
     const roomName = live.jaasAppId ? `${live.jaasAppId}/${room}` : room;
     const student = me.role === 'student';
     loadScript(`https://${domain}/${live.jaasAppId ? `${live.jaasAppId}/` : ''}external_api.js`)

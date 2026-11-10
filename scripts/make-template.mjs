@@ -7,6 +7,6 @@ const buf = XLSX.write(buildTemplate(XLSX), { type: 'buffer', bookType: 'xlsx' }
 for (const dir of ['dist', 'docs']) {
   if (dir === 'dist' && !existsSync('dist')) continue;
   mkdirSync(dir, { recursive: true });
-  writeFileSync(`${dir}/EduNexa-Import-Template.xlsx`, buf);
+  writeFileSync(`${dir}/Skuuul-Line-Pro-Import-Template.xlsx`, buf);
 }
 console.log('Template written', buf.length, 'bytes');

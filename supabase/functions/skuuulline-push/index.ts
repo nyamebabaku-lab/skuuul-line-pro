@@ -1,10 +1,10 @@
-// EduNexa push notifications: the database hands over new edunexa.notifications ids (pg_net, with a shared
+// Skuuul-Line Pro push notifications: the database hands over new skuuulline.notifications ids (pg_net, with a shared
 // secret); this sends them to the recipients' phones with Firebase Cloud Messaging (HTTP v1).
 // Needs the secret FIREBASE_SERVICE_ACCOUNT (the Firebase service-account JSON). Without it nothing is sent,
 // but notifications are still stored (the apps show them in their notification list).
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
-const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { db: { schema: 'edunexa' } });
+const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { db: { schema: 'skuuulline' } });
 const SA = (() => {
   try {
     return JSON.parse(Deno.env.get('FIREBASE_SERVICE_ACCOUNT') ?? 'null');

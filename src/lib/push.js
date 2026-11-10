@@ -20,7 +20,7 @@ export async function startPush(navigate) {
   });
   PushNotifications.addListener('registrationError', (e) => console.warn('push registration', e));
   // App open: show it inside the app (Android doesn't put it in the tray while the app is in front).
-  PushNotifications.addListener('pushNotificationReceived', (n) => toast.info(n.title || 'EduNexa', n.body || ''));
+  PushNotifications.addListener('pushNotificationReceived', (n) => toast.info(n.title || 'Skuuul-Line Pro', n.body || ''));
   PushNotifications.addListener('pushNotificationActionPerformed', ({ notification }) => {
     const link = notification?.data?.link;
     if (link) navigate ? navigate(link) : (window.location.hash = `#${link}`);
@@ -28,7 +28,7 @@ export async function startPush(navigate) {
   let perm = await PushNotifications.checkPermissions();
   if (perm.receive === 'prompt' || perm.receive === 'prompt-with-rationale') perm = await PushNotifications.requestPermissions();
   if (perm.receive !== 'granted') {
-    toast.info('Notifications are off', 'Turn them on in your phone Settings → Apps → EduNexa → Notifications');
+    toast.info('Notifications are off', 'Turn them on in your phone Settings → Apps → Skuuul-Line Pro → Notifications');
     return;
   }
   await PushNotifications.register();

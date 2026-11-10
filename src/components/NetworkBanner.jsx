@@ -6,7 +6,7 @@ import { useDB } from '../data/store';
 export function OfflineBanner() {
   const { online } = useNetwork();
   const queued = useDB((s) => s.smsLog.filter((m) => m.status === 'Queued').length);
-  const appName = useDB((s) => s.settings.appName) || 'EduNexa';
+  const appName = useDB((s) => s.settings.appName) || 'Skuuul-Line Pro';
   if (online) return null;
   return (
     <div role="status" className="no-print sticky top-0 z-40 flex items-center justify-center gap-2 bg-amber-500 px-4 py-2 text-center text-xs font-semibold text-navy-950 sm:text-sm">

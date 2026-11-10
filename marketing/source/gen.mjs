@@ -1,17 +1,17 @@
-// Builds flyers.html: 13 EduNexa social ads (1080x1080), following the graphic-design skill.
+// Builds flyers.html: 13 Skuuul-Line Pro social ads (1080x1080), following the graphic-design skill.
 import fs from 'fs';
 import { createRequire } from 'module';
-const req = createRequire('/home/BrandsME/projects/edunexa/package.json');
+const req = createRequire('/home/BrandsME/projects/skuuulline/package.json');
 const React = req('react');
 const { renderToStaticMarkup } = req('react-dom/server');
 const L = req('lucide-react');
 const QR = req('qrcode');
-const URL_ = 'https://nyamebabaku-lab.github.io/edunexa/demo/';
-const URL_TXT = 'nyamebabaku-lab.github.io/edunexa/demo';
+const URL_ = 'https://nyamebabaku-lab.github.io/skuuul-line-pro/demo/';
+const URL_TXT = 'nyamebabaku-lab.github.io/skuuul-line-pro/demo';
 const ic = (name, size = 40, sw = 2, cls = '') => renderToStaticMarkup(React.createElement(L[name], { size, strokeWidth: sw, className: cls }));
 const qr = await QR.toString(URL_, { type: 'svg', margin: 0, color: { dark: '#0a1330', light: '#ffffff' } });
 
-const logo = (dark = false) => `<div class="logo ${dark ? 'on-dark' : ''}"><span class="mark">${ic('GraduationCap', 34, 2.2)}</span><span class="word">Edu<b>Nexa</b></span></div>`;
+const logo = (dark = false) => `<div class="logo ${dark ? 'on-dark' : ''}"><span class="mark">${ic('GraduationCap', 34, 2.2)}</span><span class="word">Skuuul-Line <b>Pro</b></span></div>`;
 const cta = (variant = 'red') => `<div class="cta"><span class="btn ${variant}">Try the free demo ${ic('ArrowRight', 26, 2.6)}</span><span class="url">${URL_TXT}</span></div>`;
 const phone = (shot, cls = '', style = '') => `<div class="phone ${cls}" style="${style}"><div class="scr" style="background-image:url(shots/${shot}.png)"></div><i class="notch"></i></div>`;
 const laptop = (shot, cls = '', style = '', pos = 'left top') => `<div class="laptop ${cls}" style="${style}"><div class="lid"><div class="scr" style="background-image:url(shots/${shot}.png);background-position:${pos}"></div></div><div class="base"></div></div>`;
@@ -108,7 +108,7 @@ ad('offline', 'bg-blue', `
   <div class="copy" style="top:190px;width:600px">
     <div class="bigicon">${ic('WifiOff', 92, 2)}</div>
     <h1 class="h1 white" style="font-size:94px">No internet?<br><em class="red">No problem.</em></h1>
-    <p class="sub white">EduNexa keeps working offline and catches up when you're back online.</p>
+    <p class="sub white">Skuuul-Line Pro keeps working offline and catches up when you're back online.</p>
   </div>
   ${phone('m-dashboard', '', 'left:690px;top:190px;width:320px;transform:rotate(6deg)')}
   <div class="offbar" style="right:72px;top:150px">${ic('WifiOff', 24, 2.4)} You're offline. Changes are saved.</div>
@@ -157,7 +157,7 @@ ad('paper-vs-app', 'bg-white split', `
   ${logo()}
   <div class="copy center" style="top:150px"><h1 class="h1" style="font-size:78px">Still running your school <em class="red">on paper?</em></h1></div>
   <div class="col l"><div class="tag">Before</div>${before.map((b) => `<div class="li x">${ic('X', 28, 3)}<span>${b}</span></div>`).join('')}</div>
-  <div class="col r"><div class="tag">With EduNexa</div>${after.map((b) => `<div class="li ok">${ic('Check', 28, 3)}<span>${b}</span></div>`).join('')}</div>
+  <div class="col r"><div class="tag">With Skuuul-Line Pro</div>${after.map((b) => `<div class="li ok">${ic('Check', 28, 3)}<span>${b}</span></div>`).join('')}</div>
   ${cta('red')}`);
 
 ad('pocket', 'bg-light', `

@@ -1,6 +1,6 @@
-# EduNexa guided tour — narration script
+# Skuuul-Line Pro guided tour — narration script
 
-Video: `EduNexa-Tutorial.mp4` · length 13:18 · 89 lines · narrated (British English voice) with background music
+Video: `Skuuul-Line-Pro-Tutorial.mp4` · length 13:18 · 89 lines · narrated (British English voice) with background music
 
 Read each line when its time comes up. The same words appear as captions in the video, so the voice should match them closely; small natural changes are fine. A warm, friendly, unhurried tone works best — like a head teacher showing a visitor around the school.
 
@@ -22,11 +22,11 @@ Read each line when its time comes up. The same words appear as captions in the 
 
 ## Welcome  `0:00`
 
-- **0:01** Akwaaba! Welcome to the EduNexa guided tour.
+- **0:01** Akwaaba! Welcome to the Skuuul-Line Pro guided tour.
 
 ## 1. Signing in  `0:07`
 
-- **0:09** Akwaaba! Welcome to EduNexa, the complete management system for Bright Future International School — from Creche all the way to Diploma.
+- **0:09** Akwaaba! Welcome to Skuuul-Line Pro, the complete management system for Bright Future International School — from Creche all the way to Diploma.
 - **0:19** Everyone signs in to their own portal: administrators, teachers, parents, students, the accountant, librarian, storekeeper, transport officer, canteen manager and support staff.
 - **0:33** In demo mode you can open any portal with one click. Each portal shows only what that person is allowed to see.
 - **0:42** A school can switch on secure sign-in, with a password and a verification code sent to the phone.
@@ -165,14 +165,14 @@ Read each line when its time comes up. The same words appear as captions in the 
 
 ## 20. Works offline  `12:15`
 
-- **12:18** EduNexa keeps working even when the internet goes off.
+- **12:18** Skuuul-Line Pro keeps working even when the internet goes off.
 - **12:24** The orange bar shows we are offline — but every page still opens, and all your work is saved on the device.
 - **12:33** Text messages sent while offline wait in a queue…
 - **12:39** …and go out automatically as soon as the connection returns.
 
 ## 21. On your phone  `12:47`
 
-- **12:49** On a phone, EduNexa looks and feels like an app, with a bottom menu.
+- **12:49** On a phone, Skuuul-Line Pro looks and feels like an app, with a bottom menu.
 - **12:55** Install it: on iPhone, Safari, Share, Add to Home Screen. On Android, Chrome menu, Install app.
 - **13:05** Then it opens straight from the home screen — even without data.
 

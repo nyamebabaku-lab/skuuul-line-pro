@@ -25,7 +25,7 @@ export default function Parents() {
 
   return (
     <>
-      <PageHeader title="Parents & Guardians" subtitle={LIVE ? 'Parents join from the EduNexa app with the school code and their child\'s admission number' : 'Family contacts, linked children and fee positions'} />
+      <PageHeader title="Parents & Guardians" subtitle={LIVE ? 'Parents join from the Skuuul-Line Pro app with the school code and their child\'s admission number' : 'Family contacts, linked children and fee positions'} />
       {LIVE && <ChildRequests />}
       <CrudPage
         collection="parents"

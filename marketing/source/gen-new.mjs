@@ -1,17 +1,17 @@
 // Builds flyers-new.html: flyers 14–16 (school bus tracking, gate kiosk, what's new), same design system as gen.mjs.
 import fs from 'fs';
 import { createRequire } from 'module';
-const req = createRequire('/home/BrandsME/projects/edunexa/package.json');
+const req = createRequire('/home/BrandsME/projects/skuuulline/package.json');
 const React = req('react');
 const { renderToStaticMarkup } = req('react-dom/server');
 const L = req('lucide-react');
 const QR = req('qrcode');
-const URL_ = 'https://nyamebabaku-lab.github.io/edunexa/demo/';
-const URL_TXT = 'nyamebabaku-lab.github.io/edunexa/demo';
+const URL_ = 'https://nyamebabaku-lab.github.io/skuuul-line-pro/demo/';
+const URL_TXT = 'nyamebabaku-lab.github.io/skuuul-line-pro/demo';
 const ic = (name, size = 40, sw = 2, cls = '') => renderToStaticMarkup(React.createElement(L[name], { size, strokeWidth: sw, className: cls }));
 const qr = await QR.toString(URL_, { type: 'svg', margin: 0, color: { dark: '#0a1330', light: '#ffffff' } });
 
-const logo = (dark = false) => `<div class="logo ${dark ? 'on-dark' : ''}"><span class="mark">${ic('GraduationCap', 34, 2.2)}</span><span class="word">Edu<b>Nexa</b></span></div>`;
+const logo = (dark = false) => `<div class="logo ${dark ? 'on-dark' : ''}"><span class="mark">${ic('GraduationCap', 34, 2.2)}</span><span class="word">Skuuul-Line <b>Pro</b></span></div>`;
 const cta = (variant = 'red') => `<div class="cta"><span class="btn ${variant}">Try the free demo ${ic('ArrowRight', 26, 2.6)}</span><span class="url">${URL_TXT}</span></div>`;
 const phone = (shot, cls = '', style = '') => `<div class="phone ${cls}" style="${style}"><div class="scr" style="background-image:url(shots/${shot}.png)"></div><i class="notch"></i></div>`;
 const laptop = (shot, cls = '', style = '', pos = 'left top') => `<div class="laptop ${cls}" style="${style}"><div class="lid"><div class="scr" style="background-image:url(shots/${shot}.png);background-position:${pos}"></div></div><div class="base"></div></div>`;
@@ -57,7 +57,7 @@ ad('whats-new', 'bg-blue', `
   ${logo(true)}
   <div class="copy" style="top:170px;width:940px">
     <div class="eyebrow light">What's new</div>
-    <h1 class="h1 white" style="font-size:82px">EduNexa just got <em class="red" style="color:#ff5a7a">even better.</em></h1>
+    <h1 class="h1 white" style="font-size:82px">Skuuul-Line Pro just got <em class="red" style="color:#ff5a7a">even better.</em></h1>
   </div>
   <div class="newgrid">${news.map(([i, t], k) => `<div class="nw ${k < 2 ? 'hot' : ''}"><span class="ni">${ic(i, 34, 2.2)}</span><span>${t}</span></div>`).join('')}</div>
   ${cta('white')}`);

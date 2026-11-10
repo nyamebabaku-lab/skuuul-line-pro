@@ -1,4 +1,4 @@
-// Captures crisp screenshots of real EduNexa screens for the ad flyers.
+// Captures crisp screenshots of real Skuuul-Line Pro screens for the ad flyers.
 import { chromium } from 'playwright-core';
 const BASE = 'http://localhost:4173/';
 const EXE = process.env.HOME + '/.cache/ms-playwright/chromium-1148/chrome-linux/chrome';

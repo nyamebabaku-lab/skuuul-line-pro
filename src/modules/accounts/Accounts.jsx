@@ -76,7 +76,7 @@ export default function Accounts() {
       ),
     },
     { key: 'role', label: 'Role', sort: (u) => u.role, render: (u) => <Badge tone={u.role === 'superadmin' ? 'red' : u.role === 'admin' ? 'blue' : 'slate'}>{ROLES[u.role]?.label || u.role}</Badge> },
-    ...(isSuper ? [{ key: 'school', label: 'School', sort: (u) => schoolName[u.schoolId] || '', render: (u) => <span className="text-sm">{schoolName[u.schoolId] || (u.role === 'superadmin' ? 'EduNexa' : '—')}</span> }] : []),
+    ...(isSuper ? [{ key: 'school', label: 'School', sort: (u) => schoolName[u.schoolId] || '', render: (u) => <span className="text-sm">{schoolName[u.schoolId] || (u.role === 'superadmin' ? 'Skuuul-Line Pro' : '—')}</span> }] : []),
     { key: 'match', label: 'Linked to', hideOnMobile: true, render: (u) => (u.matchLabel ? <span className="text-xs text-slate-600 dark:text-slate-300">{u.matchLabel}</span> : <span className="text-xs text-slate-400">{u.linkedId ? 'Staff record' : '—'}</span>) },
     { key: 'createdAt', label: 'Signed up', hideOnMobile: true, sort: (u) => u.createdAt, render: (u) => <span className="text-xs text-slate-500">{fmtDate(u.createdAt)}<br />{u.lastLogin ? `Last in ${fmtDateTime(u.lastLogin)}` : 'Never signed in'}</span> },
     { key: 'status', label: 'Status', sort: (u) => u.status, render: (u) => <Badge tone={STATUS_TONE[u.status]} dot>{u.status}</Badge> },
@@ -93,7 +93,7 @@ export default function Accounts() {
             <IconButton icon={KeyRound} label="Reset password" onClick={() => setReset({ u, pw: '' })} />
             <IconButton icon={Trash2} label="Delete" tone="soft-red" onClick={() => remove(u)} />
           </div>
-        ) : <span className="text-xs text-slate-400">{u.isOwner ? 'Managed by EduNexa' : ''}</span>,
+        ) : <span className="text-xs text-slate-400">{u.isOwner ? 'Managed by Skuuul-Line Pro' : ''}</span>,
     },
   ];
 
@@ -102,7 +102,7 @@ export default function Accounts() {
     <>
       <PageHeader
         title="Accounts"
-        subtitle={isSuper ? 'Every account on EduNexa. Approve school owners here or on the Schools page.' : 'Approve the teachers, parents, students and staff who join your school with its code.'}
+        subtitle={isSuper ? 'Every account on Skuuul-Line Pro. Approve school owners here or on the Schools page.' : 'Approve the teachers, parents, students and staff who join your school with its code.'}
         actions={<Button variant="secondary" icon={refreshing ? Spinner : RefreshCw} onClick={async () => { setRefreshing(true); await refreshUsers().catch(() => {}); setRefreshing(false); }}>Refresh</Button>}
       />
       {!isSuper && <ChildRequests />}

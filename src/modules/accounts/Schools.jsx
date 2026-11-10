@@ -1,4 +1,4 @@
-// Super Admin: every school on EduNexa — approve, suspend, re-activate or delete; plus the platform dashboard.
+// Super Admin: every school on Skuuul-Line Pro — approve, suspend, re-activate or delete; plus the platform dashboard.
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Building2, Check, Ban, CircleCheck, Trash2, Users, Hourglass, School, UserCheck, GraduationCap, MessageSquareText } from 'lucide-react';
@@ -89,7 +89,7 @@ export default function Schools() {
       <Card>
         <DataTable columns={columns} rows={rows} onRowClick={(s) => navigate(`/accounts?school=${s.id}`)} initialSort={{ key: 'created_at', dir: 'desc' }}
           searchText={(s) => [s.name, s.city, s.code, s.owner?.name, s.owner?.email].join(' ')}
-          empty={<EmptyState icon={Building2} title="No schools yet" text="Schools appear here when an owner registers in EduNexa Admin." />} />
+          empty={<EmptyState icon={Building2} title="No schools yet" text="Schools appear here when an owner registers in Skuuul-Line Pro Admin." />} />
       </Card>
       <SchoolSmsModal school={smsFor} onClose={() => setSmsFor(null)} />
     </>
@@ -105,12 +105,12 @@ export function PlatformDashboard() {
   const pendingUsers = users.filter((u) => u.status === 'Pending');
   return (
     <>
-      <PageHeader title={`Welcome, ${me.name.split(' ')[0]}`} subtitle="EduNexa platform overview" />
+      <PageHeader title={`Welcome, ${me.name.split(' ')[0]}`} subtitle="Skuuul-Line Pro platform overview" />
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Schools" value={rows.length} icon={Building2} tone="blue" sub={`${rows.filter((s) => s.status === 'active').length} active`} onClick={() => navigate('/schools')} />
         <StatCard label="Schools to approve" value={pendingSchools.length} icon={Hourglass} tone="amber" onClick={() => navigate('/schools')} />
         <StatCard label="Accounts" value={users.length} icon={Users} tone="navy" sub={`${pendingUsers.length} pending`} onClick={() => navigate('/accounts')} />
-        <StatCard label="Students on EduNexa" value={rows.reduce((a, s) => a + s.students, 0)} icon={GraduationCap} tone="green" />
+        <StatCard label="Students on Skuuul-Line Pro" value={rows.reduce((a, s) => a + s.students, 0)} icon={GraduationCap} tone="green" />
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
@@ -134,7 +134,7 @@ export function PlatformDashboard() {
           <div className="divide-y divide-slate-100 dark:divide-white/5">
             {users.slice(0, 8).map((u) => (
               <div key={u.id} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
-                <div className="min-w-0"><p className="truncate font-semibold">{u.name}</p><p className="truncate text-xs text-slate-500">{ROLES[u.role]?.label} · {rows.find((s) => s.id === u.schoolId)?.name || 'EduNexa'}</p></div>
+                <div className="min-w-0"><p className="truncate font-semibold">{u.name}</p><p className="truncate text-xs text-slate-500">{ROLES[u.role]?.label} · {rows.find((s) => s.id === u.schoolId)?.name || 'Skuuul-Line Pro'}</p></div>
                 <Badge tone={{ Pending: 'amber', Active: 'green', Suspended: 'red', Deactivated: 'slate' }[u.status]}>{u.status}</Badge>
               </div>
             ))}

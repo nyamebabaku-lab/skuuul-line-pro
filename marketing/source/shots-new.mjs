@@ -1,4 +1,4 @@
-// Screenshots of the newest EduNexa screens (school bus tracking, gate kiosk, exams…) for flyers 14–16.
+// Screenshots of the newest Skuuul-Line Pro screens (school bus tracking, gate kiosk, exams…) for flyers 14–16.
 // Uses the demo build from `vite preview` (port 4173) with a running bus trip prepared first.
 import { chromium } from 'playwright-core';
 import { mkdirSync } from 'fs';
@@ -17,7 +17,7 @@ await pp.goto(BASE);
 await pp.getByRole('button', { name: /Administrator/ }).first().click();
 await sleep(1500);
 await pp.evaluate(() => {
-  const st = JSON.parse(localStorage.getItem('edunexa-db'));
+  const st = JSON.parse(localStorage.getItem('skuuulline-db'));
   const s = st.state;
   const parent = s.users.find((u) => u.role === 'parent');
   const ama = s.students.find((x) => x.parentId === parent.linkedId && x.firstName === 'Ama') || s.students.find((x) => x.parentId === parent.linkedId);
@@ -28,7 +28,7 @@ await pp.evaluate(() => {
   const hm = (d) => d.toTimeString().slice(0, 5);
   s.trips.unshift({ id: 'trp_flyer', date: '2026-11-02', // the demo's 'today'
     busId: route.busId, routeId: route.id, routeName: route.name, type: 'Morning pick-up', status: 'Running', startedAt: new Date(now.getTime() - 6 * 60000).toISOString(), departed: hm(new Date(now.getTime() - 6 * 60000)), riders: { [ama.id]: { on: hm(new Date(now.getTime() - 2 * 60000)), stopId: route.stopList[2].id, stopName: route.stopList[2].name } } });
-  localStorage.setItem('edunexa-db', JSON.stringify(st));
+  localStorage.setItem('skuuulline-db', JSON.stringify(st));
 });
 const state = await prep.storageState();
 await prep.close();
@@ -51,11 +51,11 @@ for (const [name, role, hash, kind] of shots) {
   const p = await ctx.newPage();
   await p.goto(BASE);
   await p.evaluate((r) => {
-    const s = JSON.parse(localStorage.getItem('edunexa-db')).state;
+    const s = JSON.parse(localStorage.getItem('skuuulline-db')).state;
     const u = s.users.find((x) => x.role === r);
-    const c = JSON.parse(localStorage.getItem('edunexa-session') || '{"state":{},"version":0}');
+    const c = JSON.parse(localStorage.getItem('skuuulline-session') || '{"state":{},"version":0}');
     c.state.userId = u.id;
-    localStorage.setItem('edunexa-session', JSON.stringify(c));
+    localStorage.setItem('skuuulline-session', JSON.stringify(c));
   }, role);
   await p.goto(BASE + hash);
   await p.reload();

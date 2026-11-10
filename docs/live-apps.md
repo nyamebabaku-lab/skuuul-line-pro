@@ -1,25 +1,25 @@
-# EduNexa live apps
+# Skuuul-Line Pro live apps
 
-EduNexa now comes as two real apps with real accounts, plus the old demo.
+Skuuul-Line Pro now comes as two real apps with real accounts, plus the old demo.
 
 | App | Who signs in | Web | Android |
 |---|---|---|---|
-| **EduNexa** | Head Teacher, Teachers, Students, Parents, Accountant, Librarian, Storekeeper, Transport Officer, Canteen Manager, Hostel/Boarding Manager, Support Staff, Gate Kiosk | https://nyamebabaku-lab.github.io/edunexa/ | [EduNexa.apk](https://github.com/nyamebabaku-lab/edunexa/releases/latest/download/EduNexa.apk) |
-| **EduNexa Admin** | School Owner/Admin and the EduNexa Super Admin | https://nyamebabaku-lab.github.io/edunexa/admin/ | [EduNexa-Admin.apk](https://github.com/nyamebabaku-lab/edunexa/releases/latest/download/EduNexa-Admin.apk) |
-| Demo | Anyone (one-click demo logins, sample school) | https://nyamebabaku-lab.github.io/edunexa/demo/ | — |
+| **Skuuul-Line Pro** | Head Teacher, Teachers, Students, Parents, Accountant, Librarian, Storekeeper, Transport Officer, Canteen Manager, Hostel/Boarding Manager, Support Staff, Gate Kiosk | https://nyamebabaku-lab.github.io/skuuul-line-pro/ | [Skuuul-Line-Pro.apk](https://github.com/nyamebabaku-lab/skuuul-line-pro/releases/latest/download/Skuuul-Line-Pro.apk) |
+| **Skuuul-Line Pro Admin** | School Owner/Admin and the Skuuul-Line Pro Super Admin | https://nyamebabaku-lab.github.io/skuuul-line-pro/admin/ | [Skuuul-Line-Pro-Admin.apk](https://github.com/nyamebabaku-lab/skuuul-line-pro/releases/latest/download/Skuuul-Line-Pro-Admin.apk) |
+| Demo | Anyone (one-click demo logins, sample school) | https://nyamebabaku-lab.github.io/skuuul-line-pro/demo/ | — |
 
 The live apps have no demo data. They offer only **Sign in** and **Create account**. Nobody can create a Super Admin account from them.
 
 ## How accounts work
 
 1. **Super Admin (one-time).**
-   - Open EduNexa Admin and tap **Set up the EduNexa Super Admin** (shown only until it is claimed).
+   - Open Skuuul-Line Pro Admin and tap **Set up the Skuuul-Line Pro Super Admin** (shown only until it is claimed).
    - Only the reserved email, `nyamebabaku@gmail.com`, can claim it.
 2. **A school registers.**
-   - In EduNexa Admin, the owner taps **Register a school** and enters the school name, logo, theme colour and their own details.
+   - In Skuuul-Line Pro Admin, the owner taps **Register a school** and enters the school name, logo, theme colour and their own details.
    - The school and its owner wait as *pending*.
 3. **The Super Admin approves the school** on the **Schools** page. This also activates the owner. Each school gets a 6-character **school code**.
-4. **Everyone else joins** in the EduNexa app:
+4. **Everyone else joins** in the Skuuul-Line Pro app:
    1. Tap **Create account** and enter the school code.
    2. Choose a role.
    3. Enter name, phone or email, and a password.
@@ -35,17 +35,17 @@ The live apps have no demo data. They offer only **Sign in** and **Create accoun
    - the Head Teacher can view fees but not change them;
    - private messages are visible only to the sender and the receiver.
 
-Each school's **logo and theme colour** replace EduNexa's throughout:
+Each school's **logo and theme colour** replace Skuuul-Line Pro's throughout:
 - the menu;
 - report cards, receipts, ID cards and payslips;
 - the gate kiosk.
 
-"Powered by EduNexa" stays small under the school name.
+"Powered by Skuuul-Line Pro" stays small under the school name.
 
 ## Importing existing records from Excel
 
-1. In EduNexa Admin, open **Import from Excel**.
-2. Download the template. A copy is also in [`docs/EduNexa-Import-Template.xlsx`](EduNexa-Import-Template.xlsx).
+1. In Skuuul-Line Pro Admin, open **Import from Excel**.
+2. Download the template. A copy is also in [`docs/Skuuul-Line-Pro-Import-Template.xlsx`](Skuuul-Line-Pro-Import-Template.xlsx).
 3. Fill in any of these sheets:
    - Students, with parents on the same row
    - Staff (with "Teaches" pairs and class-teacher assignments)
@@ -77,7 +77,7 @@ Notes:
 | Area | Where it lives |
 |---|---|
 | Builds | `VITE_APP=main\|admin\|demo` (`src/config.js`). `npm run build` builds all three into `dist/`, `dist/admin/` and `dist/demo/`, plus the Excel template. |
-| Backend | Supabase project `jepkzvunetajsgscoelv`, shared with MyVoteHub. EduNexa uses its own `edunexa` schema. Migrations are in `supabase/migrations/`. |
+| Backend | Supabase project `jepkzvunetajsgscoelv`, shared with MyVoteHub. Skuuul-Line Pro uses its own `skuuulline` schema. Migrations are in `supabase/migrations/`. |
 | Permissions | `src/lib/access.js` is the role × collection matrix. Run `npm run access-sql` to regenerate `0002_access.sql` after changing it. |
 | Sync | `src/data/sync.js`: loads what the account may read and keeps it updated in real time. Writes go through an offline outbox. |
-| Android | Capacitor projects in `android/` (`com.edunexa.app`) and `android-admin/` (`com.edunexa.admin`). `.github/workflows/android.yml` builds signed APK and AAB files on every push to `main`. The signing key is backed up in `/home/BrandsME/projects/edunexa-signing`; keep it safe. |
+| Android | Capacitor projects in `android/` (`com.skuuulline.app`) and `android-admin/` (`com.skuuulline.admin`). `.github/workflows/android.yml` builds signed APK and AAB files on every push to `main`. The signing key is backed up in `/home/BrandsME/projects/skuuulline-signing`; keep it safe. |

@@ -387,7 +387,7 @@ export default function Settings() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `edunexa-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `skuuulline-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
   };
   const reset = async () => {

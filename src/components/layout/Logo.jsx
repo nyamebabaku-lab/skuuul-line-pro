@@ -29,7 +29,7 @@ export function SchoolLogo({ className = 'h-10 w-10' }) {
   return <LogoMark className={className} />;
 }
 
-/** Splits "EduNexa" into "Edu" + "Nexa" for the two-tone wordmark. */
+/** Splits the app name for the two-tone wordmark: "Skuuul-Line" + "Pro". */
 function splitName(name) {
   const m = /^([A-Z][a-z]+)([A-Z].*)$/.exec(name);
   if (m) return [m[1], m[2]];
@@ -38,10 +38,10 @@ function splitName(name) {
 }
 
 export default function Logo({ compact, dark }) {
-  const appName = useDB((s) => s.settings.appName) || 'EduNexa';
+  const appName = useDB((s) => s.settings.appName) || 'Skuuul-Line Pro';
   const schoolName = useDB((s) => s.settings.schoolName);
-  const tagline = useDB((s) => s.settings.tagline) || (LIVE ? 'Powered by EduNexa' : 'School Suite');
-  // Live: each school's own name and logo lead; EduNexa only appears as "Powered by".
+  const tagline = useDB((s) => s.settings.tagline) || (LIVE ? 'Powered by Skuuul-Line Pro' : 'School Suite');
+  // Live: each school's own name and logo lead; Skuuul-Line Pro only appears as "Powered by".
   if (LIVE && schoolName) {
     return (
       <div className="flex min-w-0 items-center gap-2.5">

@@ -229,7 +229,7 @@ export default function StudentProfile() {
                     <div className="space-y-2 p-5 text-sm">
                       <p className="font-semibold text-slate-900 dark:text-white">{student.parentName || 'No parent linked yet'}</p>
                       {student.parentPhone && <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-brand-600" /> <a href={`tel:${student.parentPhone}`}>{student.parentPhone}</a> <span className="text-xs text-slate-400">(for texts)</span></p>}
-                      <p className="text-xs text-slate-500">The parent links themselves in the EduNexa app with the school code and admission number <b>{student.admissionNo}</b>.</p>
+                      <p className="text-xs text-slate-500">The parent links themselves in the Skuuul-Line Pro app with the school code and admission number <b>{student.admissionNo}</b>.</p>
                     </div>
                   )}
                 </div>

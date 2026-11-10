@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.edunexa.admin"
+    namespace "com.skuuulline.admin"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.edunexa.admin"
+        applicationId "com.skuuulline.admin"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode((System.getenv("VERSION_CODE") ?: "1").toInteger())

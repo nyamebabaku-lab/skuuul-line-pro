@@ -4,11 +4,11 @@ import { LIVE, storeKey } from '../config';
 const url = import.meta.env.VITE_SUPABASE_URL;
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Demo builds never talk to the server. EduNexa's tables live in their own "edunexa" schema.
+// Demo builds never talk to the server. Skuuul-Line Pro's tables live in their own "skuuulline" schema.
 export const supabase = LIVE && url && key
   ? createClient(url, key, {
-      db: { schema: 'edunexa' },
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: storeKey('edunexa-auth') },
+      db: { schema: 'skuuulline' },
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: storeKey('skuuulline-auth') },
     })
   : null;
 

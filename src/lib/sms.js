@@ -1,5 +1,5 @@
 // Who an SMS goes to. Every smsLog record carries `to` (phone numbers); the live apps send it through
-// mNotify (supabase/functions/edunexa-sms), the demo only pretends.
+// mNotify (supabase/functions/skuuulline-sms), the demo only pretends.
 
 const norm = (p) => {
   let d = String(p || '').replace(/\D/g, '');

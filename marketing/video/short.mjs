@@ -18,7 +18,7 @@ const phone = { viewport: { width: VW, height: VH }, deviceScaleFactor: 1080 / V
   await p.getByRole('button', { name: /Administrator/ }).first().click();
   await p.waitForTimeout(1500);
   await p.evaluate(() => {
-    const k = 'edunexa-db';
+    const k = 'skuuulline-db';
     const st = JSON.parse(localStorage.getItem(k));
     const s = st.state;
     const parent = s.users.find((u) => u.role === 'parent');
@@ -116,9 +116,9 @@ const dlg = () => p.getByRole('dialog').last();
 // Switch person without showing the sign-in page.
 async function as(role, path) {
   await p.evaluate((r) => {
-    const s = JSON.parse(localStorage.getItem('edunexa-db')).state;
+    const s = JSON.parse(localStorage.getItem('skuuulline-db')).state;
     const u = s.users.find((x) => x.role === r);
-    const k = 'edunexa-session';
+    const k = 'skuuulline-session';
     const c = JSON.parse(localStorage.getItem(k) || '{"state":{},"version":0}');
     c.state.userId = u.id;
     localStorage.setItem(k, JSON.stringify(c));
@@ -139,10 +139,10 @@ const LOGO = '<svg width="78" height="78" viewBox="0 0 100 100"><defs><linearGra
 
 // 1. title (shown before the app is visible)
 await p.goto(BASE + '#/');
-await card(`${LOGO}<h1>Edu<b>Nexa</b><br>what's new</h1><p>The school app for Ghanaian schools</p>`);
+await card(`${LOGO}<h1>Skuuul-Line <b>Pro</b><br>what's new</h1><p>The school app for Ghanaian schools</p>`);
 await as('parent', '/transport');
 await p.evaluate(() => window.__card(`${document.getElementById('card')?.innerHTML || ''}`));
-await card(`${LOGO}<h1>Edu<b>Nexa</b><br>what's new</h1><p>The school app for Ghanaian schools</p>`);
+await card(`${LOGO}<h1>Skuuul-Line <b>Pro</b><br>what's new</h1><p>The school app for Ghanaian schools</p>`);
 await scene('s01');
 const sw = p.locator('select[aria-label="Choose child"]');
 if (await sw.count()) await sw.selectOption({ label: await sw.locator('option', { hasText: 'Ama' }).first().innerText() });
@@ -213,7 +213,7 @@ await cap('And much more', 'Parents link their own children · two guardians per
 // 10. end
 await scene('s11');
 await cap(null);
-await card(`${LOGO}<h1>Edu<b>Nexa</b></h1><p>Run your whole school from one app</p><ul><li>Live school bus tracking</li><li>Exam & lesson timetables</li><li>Fees, marks, attendance</li></ul><div class="url">Try the free demo</div><p style="margin-top:10px;font-size:15px">nyamebabaku-lab.github.io/edunexa/demo</p>`);
+await card(`${LOGO}<h1>Skuuul-Line <b>Pro</b></h1><p>Run your whole school from one app</p><ul><li>Live school bus tracking</li><li>Exam & lesson timetables</li><li>Fees, marks, attendance</li></ul><div class="url">Try the free demo</div><p style="margin-top:10px;font-size:15px">nyamebabaku-lab.github.io/skuuul-line-pro/demo</p>`);
 await finish();
 await wait(1200);
 writeFileSync(OUT + 'marks.json', JSON.stringify(marks, null, 1));

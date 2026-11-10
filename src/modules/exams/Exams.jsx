@@ -142,7 +142,7 @@ export default function Exams() {
     if (on && !(sel.papers || []).length) return toast.error('No papers yet', 'Add the papers before publishing');
     db.update('exams', sel.id, { published: on });
     if (on) {
-      db.add('notices', { title: `Exam timetable: ${sel.name}`, body: `The ${sel.name} timetable (${fmtDate(sel.start)} – ${fmtDate(sel.end)}) is out. Open Exam Timetable in the EduNexa app to see your papers.`, audience: 'All', priority: 'High', date: TODAY, authorId: user.linkedId || null, pinned: false });
+      db.add('notices', { title: `Exam timetable: ${sel.name}`, body: `The ${sel.name} timetable (${fmtDate(sel.start)} – ${fmtDate(sel.end)}) is out. Open Exam Timetable in the Skuuul-Line Pro app to see your papers.`, audience: 'All', priority: 'High', date: TODAY, authorId: user.linkedId || null, pinned: false });
       toast.success('Published', 'Students, parents and teachers can see it now and were notified');
     } else toast.info('Hidden', 'Only the Owner/Admin and Head Teacher can see it now');
   };

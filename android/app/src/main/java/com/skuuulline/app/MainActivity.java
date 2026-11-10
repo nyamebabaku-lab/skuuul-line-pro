@@ -1,4 +1,4 @@
-package com.edunexa.admin;
+package com.skuuulline.app;
 
 import com.getcapacitor.BridgeActivity;
 

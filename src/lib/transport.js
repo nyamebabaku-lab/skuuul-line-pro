@@ -77,7 +77,7 @@ export async function startSharing(tripId) {
     const { registerPlugin } = await import('@capacitor/core');
     const BG = registerPlugin('BackgroundGeolocation');
     const id = await BG.addWatcher(
-      { backgroundMessage: 'EduNexa is sharing the school bus location for this trip.', backgroundTitle: 'Sharing bus location', requestPermissions: true, stale: false, distanceFilter: 25 },
+      { backgroundMessage: 'Skuuul-Line Pro is sharing the school bus location for this trip.', backgroundTitle: 'Sharing bus location', requestPermissions: true, stale: false, distanceFilter: 25 },
       (loc, err) => {
         if (err) return useSharing.setState({ error: err.code === 'NOT_AUTHORIZED' ? 'Location permission is off — allow it in the phone settings' : err.message });
         if (loc) guard(loc);

@@ -26,7 +26,7 @@ const pad = (n, w = 3) => String(n).padStart(w, '0');
 export const SECTIONS = ['Early Years', 'Primary', 'JHS', 'SHS', 'Diploma'];
 
 export const DEFAULT_SETTINGS_EXT = {
-  appName: 'EduNexa',
+  appName: 'Skuuul-Line Pro',
   logo: null,
   theme: { preset: 'royal', brand: '#2556eb', accent: '#e11d48' },
   country: 'Ghana',
@@ -832,7 +832,7 @@ export function buildSeed() {
     { id: 'usr_driver', role: 'driver', name: `${busDriver.title} ${busDriver.firstName} ${busDriver.lastName}`, linkedId: busDriver.id, email: busDriver.email },
     { id: 'usr_attendant', role: 'attendant', name: `${busAttendant.title} ${busAttendant.firstName} ${busAttendant.lastName}`, linkedId: busAttendant.id, email: '' },
     { id: 'usr_staff', role: 'staff', name: `${securityGuard.title} ${securityGuard.firstName} ${securityGuard.lastName}`, linkedId: securityGuard.id, email: securityGuard.email },
-    { id: 'usr_super', role: 'superadmin', name: 'Platform Super Admin', linkedId: null, email: 'superadmin@edunexa.app' },
+    { id: 'usr_super', role: 'superadmin', name: 'Platform Super Admin', linkedId: null, email: 'superadmin@skuuulline.app' },
   ];
   users.forEach((u) => {
     u.status = 'Active';

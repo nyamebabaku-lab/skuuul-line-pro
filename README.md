@@ -1,4 +1,4 @@
-# EduNexa — School Management System + LMS
+# Skuuul-Line Pro — School Management System + LMS
 
 A complete, installable web app for running a Ghanaian school from Creche to Diploma: admissions, students, parents, staff & payroll, classes, timetable, attendance, gradebook, report cards, LMS, fees, transport, library, store, hostel, health & discipline, communication, calendar, reports and settings.
 
@@ -6,9 +6,9 @@ A complete, installable web app for running a Ghanaian school from Creche to Dip
 
 ## Live apps
 
-- **EduNexa** (teachers, parents, students, staff, gate kiosk): https://nyamebabaku-lab.github.io/edunexa/ · [Android APK](https://github.com/nyamebabaku-lab/edunexa/releases/latest/download/EduNexa.apk)
-- **EduNexa Admin** (school owners + Super Admin): https://nyamebabaku-lab.github.io/edunexa/admin/ · [Android APK](https://github.com/nyamebabaku-lab/edunexa/releases/latest/download/EduNexa-Admin.apk)
-- **Demo** (sample school, one-click logins): https://nyamebabaku-lab.github.io/edunexa/demo/
+- **Skuuul-Line Pro** (teachers, parents, students, staff, gate kiosk): https://nyamebabaku-lab.github.io/skuuul-line-pro/ · [Android APK](https://github.com/nyamebabaku-lab/skuuul-line-pro/releases/latest/download/Skuuul-Line-Pro.apk)
+- **Skuuul-Line Pro Admin** (school owners + Super Admin): https://nyamebabaku-lab.github.io/skuuul-line-pro/admin/ · [Android APK](https://github.com/nyamebabaku-lab/skuuul-line-pro/releases/latest/download/Skuuul-Line-Pro-Admin.apk)
+- **Demo** (sample school, one-click logins): https://nyamebabaku-lab.github.io/skuuul-line-pro/demo/
 
 Accounts, approvals, Excel import and the developer set-up are described in [docs/live-apps.md](docs/live-apps.md).
 
@@ -17,8 +17,8 @@ Accounts, approvals, Excel import and the developer set-up are described in [doc
 ```bash
 npm install
 npm run dev:demo     # demo school, one-click logins
-npm run dev          # live EduNexa app (needs .env.local with VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)
-npm run dev:admin    # live EduNexa Admin
+npm run dev          # live Skuuul-Line Pro app (needs .env.local with VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)
+npm run dev:admin    # live Skuuul-Line Pro Admin
 ```
 
 ## Deploy to a public URL (Netlify)

@@ -50,7 +50,7 @@ const safeStorage = {
     } catch (e) {
       if (Date.now() - warned > 30000) {
         warned = Date.now();
-        window.dispatchEvent(new CustomEvent('edunexa-storage-full', { detail: e.name }));
+        window.dispatchEvent(new CustomEvent('skuuulline-storage-full', { detail: e.name }));
       }
     }
   },
@@ -144,7 +144,7 @@ export const useDB = create(
       get: (col, id) => get()[col].find((x) => x.id === id),
     }),
     {
-      name: storeKey('edunexa-db'),
+      name: storeKey('skuuulline-db'),
       version: 5,
       // Newer versions add collections, accounts and settings; bring them in without touching saved data.
       migrate: (persisted, version) => {
@@ -195,6 +195,6 @@ export const useSession = create(
       setChild: (childId) => set({ childId }),
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
     }),
-    { name: storeKey('edunexa-session') },
+    { name: storeKey('skuuulline-session') },
   ),
 );

@@ -8,7 +8,7 @@ import { LIVE, IS_NATIVE, SITE } from '../../config';
 import { Badge, Button, Card, CardHeader, PageHeader, Spinner, toast, cx } from '../../components/ui';
 
 const loadXLSX = () => import('xlsx');
-const TEMPLATE_NAME = 'EduNexa-Import-Template.xlsx';
+const TEMPLATE_NAME = 'Skuuul-Line-Pro-Import-Template.xlsx';
 
 export default function Import() {
   const [plan, setPlan] = useState(null);
@@ -34,7 +34,7 @@ export default function Import() {
       const XLSX = await loadXLSX();
       const wb = XLSX.read(await f.arrayBuffer(), { cellDates: true });
       const p = planImport(XLSX, wb, useDB.getState());
-      if (!p.sheets.length) toast.error('Nothing found', 'Use the EduNexa template — sheet names and headings must match.');
+      if (!p.sheets.length) toast.error('Nothing found', 'Use the Skuuul-Line Pro template — sheet names and headings must match.');
       setPlan(p);
       setFile(f.name);
     } catch (e2) {
@@ -61,7 +61,7 @@ export default function Import() {
 
   return (
     <>
-      <PageHeader title="Import from Excel" subtitle="Move your existing records into EduNexa: students & parents, staff, classes, fee balances, past scores, library books and store stock." />
+      <PageHeader title="Import from Excel" subtitle="Move your existing records into Skuuul-Line Pro: students & parents, staff, classes, fee balances, past scores, library books and store stock." />
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
           <Card className="p-6">

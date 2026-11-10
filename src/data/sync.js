@@ -1,4 +1,4 @@
-// Live apps: keeps the in-browser store in step with the EduNexa server (Supabase, schema "edunexa").
+// Live apps: keeps the in-browser store in step with the Skuuul-Line Pro server (Supabase, schema "skuuulline").
 // Reads: everything the signed-in account may see (the database's row-level security decides).
 // Writes: store actions queue each change in a saved outbox, sent in order, so work done offline goes up later.
 import { create } from 'zustand';
@@ -17,8 +17,8 @@ import { startPush, stopPush } from '../lib/push';
 export const useLive = create(() => ({ notifications: [], childRequests: [], phase: 'loading', profile: null, school: null, superExists: true, schools: [], stats: {}, pending: 0, syncing: false, lastSync: null }));
 const L = (patch) => useLive.setState(patch);
 
-const OUTBOX = storeKey('edunexa-outbox');
-const OWNER = storeKey('edunexa-owner'); // whose data the cached store holds
+const OUTBOX = storeKey('skuuulline-outbox');
+const OWNER = storeKey('skuuulline-owner'); // whose data the cached store holds
 let outbox = [];
 try { outbox = JSON.parse(localStorage.getItem(OUTBOX) || '[]'); } catch { outbox = []; }
 const saveOutbox = () => {
@@ -128,7 +128,7 @@ async function loadPlatform() {
     must(await supabase.rpc('platform_stats')),
   ]);
   const counts = Object.fromEntries((stats?.schools || []).map((s) => [s.id, s]));
-  useDB.setState({ users, settings: { ...emptyState().settings, schoolName: 'EduNexa Platform' } });
+  useDB.setState({ users, settings: { ...emptyState().settings, schoolName: 'Skuuul-Line Pro Platform' } });
   L({ schools, stats: counts });
 }
 
@@ -187,16 +187,16 @@ export async function reload() {
 // ---------------------------------------------------------------- realtime
 function subscribe(profile) {
   channel?.unsubscribe();
-  const ch = supabase.channel(`edunexa-${profile.user_id}`);
+  const ch = supabase.channel(`skuuulline-${profile.user_id}`);
   if (profile.role !== 'superadmin') {
-    ch.on('postgres_changes', { event: '*', schema: 'edunexa', table: 'records', filter: `school_id=eq.${profile.school_id}` }, (ev) => {
+    ch.on('postgres_changes', { event: '*', schema: 'skuuulline', table: 'records', filter: `school_id=eq.${profile.school_id}` }, (ev) => {
       const row = ev.eventType === 'DELETE' ? ev.old : ev.new;
       if (!row?.col) return;
       // Our own unsent edits win until they reach the server.
       if (outbox.some((o) => o.col === row.col && o.id === row.id)) return;
       remoteChange(row.col, row.id, ev.eventType === 'DELETE' ? null : row.data);
     });
-    ch.on('postgres_changes', { event: 'UPDATE', schema: 'edunexa', table: 'schools', filter: `id=eq.${profile.school_id}` }, async (ev) => {
+    ch.on('postgres_changes', { event: 'UPDATE', schema: 'skuuulline', table: 'schools', filter: `id=eq.${profile.school_id}` }, async (ev) => {
       let school = ev.new;
       // Very large rows (logo + front picture) can arrive without their settings: read the row instead.
       if (!school?.settings || ev.errors?.length) {
@@ -213,21 +213,21 @@ function subscribe(profile) {
     });
   }
   if (['parent', 'admin', 'headteacher'].includes(profile.role))
-    ch.on('postgres_changes', { event: '*', schema: 'edunexa', table: 'child_requests' }, (ev) => {
+    ch.on('postgres_changes', { event: '*', schema: 'skuuulline', table: 'child_requests' }, (ev) => {
       loadChildRequests().catch(() => {});
       // A parent's request was approved: their new child's records become readable — load them.
       if (profile.role === 'parent' && ev.new?.status === 'approved' && ev.new?.user_id === profile.user_id) reload();
     });
-  ch.on('postgres_changes', { event: 'INSERT', schema: 'edunexa', table: 'notifications', filter: `user_id=eq.${profile.user_id}` }, (ev) => {
+  ch.on('postgres_changes', { event: 'INSERT', schema: 'skuuulline', table: 'notifications', filter: `user_id=eq.${profile.user_id}` }, (ev) => {
     L({ notifications: [ev.new, ...useLive.getState().notifications].slice(0, 100) });
   });
-  ch.on('postgres_changes', { event: '*', schema: 'edunexa', table: 'profiles' }, (ev) => {
+  ch.on('postgres_changes', { event: '*', schema: 'skuuulline', table: 'profiles' }, (ev) => {
     if ((ev.new?.user_id || ev.old?.user_id) === profile.user_id) return refresh();
     loadUsers().then((users) => useDB.setState({ users })).catch(() => {});
     if (profile.role === 'superadmin') loadPlatform().catch(() => {});
   });
   if (profile.role === 'superadmin')
-    ch.on('postgres_changes', { event: '*', schema: 'edunexa', table: 'schools' }, () => loadPlatform().catch(() => {}));
+    ch.on('postgres_changes', { event: '*', schema: 'skuuulline', table: 'schools' }, () => loadPlatform().catch(() => {}));
   ch.subscribe();
   channel = ch;
 }
@@ -307,7 +307,7 @@ export async function flush() {
         if (head.type === 'put') {
           must(await supabase.from('records').upsert(batch.map((o) => ({ school_id: profile.school_id, col: o.col, id: o.id, data: o.data })), { onConflict: 'school_id,col,id' }));
         } else if (head.type === 'sms') {
-          const { data, error } = await supabase.functions.invoke('edunexa-sms', { body: { smsId: head.smsId } });
+          const { data, error } = await supabase.functions.invoke('skuuulline-sms', { body: { smsId: head.smsId } });
           if (error) {
             // Network trouble or the function is unreachable: keep it and try again later.
             if (!error.context || error.name === 'FunctionsFetchError') throw new Error('No internet connection');

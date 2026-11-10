@@ -1,18 +1,18 @@
 # Turning on phone notifications (Firebase) — 10 minutes
 
-Push notifications on Android go through Google Firebase (free). EduNexa needs **two files** from you.
+Push notifications on Android go through Google Firebase (free). Skuuul-Line Pro needs **two files** from you.
 
 ## 1. Create the Firebase project
 1. Open https://console.firebase.google.com and sign in with your Google account.
-2. Click **Create a project**, name it `EduNexa`, then **Continue**. Google Analytics is optional; you can turn it off. Click **Create project**.
+2. Click **Create a project**, name it `Skuuul-Line Pro`, then **Continue**. Google Analytics is optional; you can turn it off. Click **Create project**.
 
 ## 2. Add both Android apps
 1. On the project page, click the **Android** icon ("Add app").
-2. **Android package name:** `com.edunexa.app`. **App nickname:** `EduNexa`. Click **Register app**.
+2. **Android package name:** `com.skuuulline.app`. **App nickname:** `Skuuul-Line Pro`. Click **Register app**.
 3. Click **Next**, **Next**, then **Continue to console**. You can skip the download for now.
 4. Click **Add app**, choose **Android** again, and register the second app:
-   - **Android package name:** `com.edunexa.admin`
-   - **App nickname:** `EduNexa Admin`
+   - **Android package name:** `com.skuuulline.admin`
+   - **App nickname:** `Skuuul-Line Pro Admin`
 
 ## 3. File 1: `google-services.json`
 1. Click the ⚙️ gear (top left), then **Project settings**.
@@ -21,18 +21,18 @@ Push notifications on Android go through Google Firebase (free). EduNexa needs *
 
 ## 4. File 2: the service-account key
 1. Still in **Project settings**, open the **Service accounts** tab.
-2. Click **Generate new private key**, then **Generate key**. A `.json` file downloads, e.g. `edunexa-firebase-adminsdk-xxxx.json`.
+2. Click **Generate new private key**, then **Generate key**. A `.json` file downloads, e.g. `skuuulline-firebase-adminsdk-xxxx.json`.
 3. Keep this file private. It lets a server send notifications as your app.
 
 ## 5. Give them to Claude
-Put both files in `/home/BrandsME/projects/edunexa-signing/` (the private folder that is never published) and say **"Firebase files ready"**.
+Put both files in `/home/BrandsME/projects/skuuulline-signing/` (the private folder that is never published) and say **"Firebase files ready"**.
 
 Claude then:
 - stores them as private secrets on GitHub and Supabase;
-- deploys the `edunexa-push` server function;
+- deploys the `skuuulline-push` server function;
 - rebuilds both APKs with notifications switched on.
 
-After installing the new APKs, each phone asks **"Allow EduNexa to send you notifications?"**. Tap **Allow**.
+After installing the new APKs, each phone asks **"Allow Skuuul-Line Pro to send you notifications?"**. Tap **Allow**.
 
 ## What sends a notification
 

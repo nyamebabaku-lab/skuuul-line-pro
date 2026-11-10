@@ -1,4 +1,4 @@
-// Excel import: the template schools fill in, and the logic that turns a filled workbook into EduNexa records.
+// Excel import: the template schools fill in, and the logic that turns a filled workbook into Skuuul-Line Pro records.
 // Re-importing the same file updates records instead of duplicating them (students by admission number,
 // staff by staff number / email / phone, classes by name, books by ISBN, store items by SKU…).
 import { uid } from './format';
@@ -45,7 +45,7 @@ export const SHEETS = [
   },
   {
     name: 'Fee Balances',
-    about: "Opening balances: what each student owes when you start using EduNexa. Leave Term empty for the current term.",
+    about: "Opening balances: what each student owes when you start using Skuuul-Line Pro. Leave Term empty for the current term.",
     cols: [['Admission No*', 'ABC/24/0001'], ['Amount Owed*', 850], ['Description', 'Arrears brought forward'], ['Term', 'Term 1, 2026/2027'], ['Due Date', '2026-11-30']],
   },
   {
@@ -66,13 +66,13 @@ export const SHEETS = [
 ];
 
 const README = [
-  ['EduNexa — data import template'],
+  ['Skuuul-Line Pro — data import template'],
   [''],
   ['How to use'],
   ['1. Fill in the sheets you need. Every sheet is optional — import just Students, or everything at once.'],
   ['2. Keep the first row (the headings) exactly as it is. Columns marked * are required.'],
   ['3. Delete the grey EXAMPLE row on each sheet (rows still starting with "EXAMPLE" are skipped anyway).'],
-  ['4. In EduNexa Admin go to  Import from Excel  →  choose this file  →  check the preview  →  Import.'],
+  ['4. In Skuuul-Line Pro Admin go to  Import from Excel  →  choose this file  →  check the preview  →  Import.'],
   ['5. You can import again later: existing students (same admission number), staff (same staff no, email or phone), classes,'],
   ['   books (same ISBN) and store items (same SKU) are updated, not duplicated.'],
   ['6. No internet? Import anyway — everything is saved on the device and uploaded when you are back online.'],
@@ -89,7 +89,7 @@ const README = [
   ['Teaches (Staff)', 'Class - Subject pairs separated by ";" e.g.  JHS 1A - Mathematics; JHS 2A - Mathematics'],
   [''],
   ['After import'],
-  ['Parents and students then create their own accounts in the EduNexa app with your school code and the student admission number.'],
+  ['Parents and students then create their own accounts in the Skuuul-Line Pro app with your school code and the student admission number.'],
   ['Teachers and staff do the same; their account is linked to the staff record with the same phone number or email.'],
 ];
 
@@ -358,7 +358,7 @@ export function planImport(XLSX, wb, db) {
   });
   classTeacherLater.forEach(([c, who, row]) => {
     const s = findStaff(who);
-    if (!s) return err('Classes', row, `Class teacher "${who}" is not on the Staff sheet or in EduNexa`);
+    if (!s) return err('Classes', row, `Class teacher "${who}" is not on the Staff sheet or in Skuuul-Line Pro`);
     put('classes', Object.assign(c, { classTeacherId: s.id }), false, null);
   });
 

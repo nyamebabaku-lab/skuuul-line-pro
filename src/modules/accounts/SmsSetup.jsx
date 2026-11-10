@@ -8,7 +8,7 @@ import { Badge, Button, Card, CardHeader, Field, Input, Modal, Spinner, toast, c
 export const smsStatus = async (sid) => must(await supabase.rpc('school_sms_status', sid ? { sid } : {}));
 
 async function callSms(body) {
-  const { data, error } = await supabase.functions.invoke('edunexa-sms', { body });
+  const { data, error } = await supabase.functions.invoke('skuuulline-sms', { body });
   if (error) {
     let info = {};
     try { info = await error.context.json(); } catch { /* not JSON */ }
@@ -117,10 +117,10 @@ export function SchoolSmsCard({ myPhone }) {
         <StatusLines st={st} />
         {st?.configured ? (
           <>
-            <p className="flex items-center gap-1.5 text-xs text-emerald-700"><CheckCircle2 className="h-3.5 w-3.5" /> Connected by EduNexa. Credit is bought on your mNotify account.</p>
+            <p className="flex items-center gap-1.5 text-xs text-emerald-700"><CheckCircle2 className="h-3.5 w-3.5" /> Connected by Skuuul-Line Pro. Credit is bought on your mNotify account.</p>
             <TestAndBalance defaultPhone={myPhone} />
           </>
-        ) : st && <p className="text-sm text-slate-500">Contact EduNexa to connect your school's mNotify account. Until then, texts appear in the SMS history as “Failed — not set up”.</p>}
+        ) : st && <p className="text-sm text-slate-500">Contact Skuuul-Line Pro to connect your school's mNotify account. Until then, texts appear in the SMS history as “Failed — not set up”.</p>}
       </div>
     </Card>
   );

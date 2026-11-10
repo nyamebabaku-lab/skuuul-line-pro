@@ -113,11 +113,11 @@ export default function SchoolPanel() {
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
   if (!school) return null;
-  const invite = `Join ${school.name} on EduNexa.\n1. Open ${SITE} or install the Android app: ${APK_URL}\n2. Tap "Create account" and enter our school code: ${school.code}\nParents and students: have your admission number ready.`;
+  const invite = `Join ${school.name} on Skuuul-Line Pro.\n1. Open ${SITE} or install the Android app: ${APK_URL}\n2. Tap "Create account" and enter our school code: ${school.code}\nParents and students: have your admission number ready.`;
   const copy = async () => {
     try { await navigator.clipboard.writeText(invite); toast.success('Invitation copied', 'Paste it into WhatsApp, SMS or email'); } catch { toast.info(`School code: ${school.code}`); }
   };
-  const share = () => (navigator.share ? navigator.share({ title: `${school.name} on EduNexa`, text: invite }).catch(() => {}) : window.open(`https://wa.me/?text=${encodeURIComponent(invite)}`, '_blank'));
+  const share = () => (navigator.share ? navigator.share({ title: `${school.name} on Skuuul-Line Pro`, text: invite }).catch(() => {}) : window.open(`https://wa.me/?text=${encodeURIComponent(invite)}`, '_blank'));
   const regen = async () => {
     if (!(await confirmDialog('Change the school code?', 'The old code stops working at once. Existing accounts are not affected — only new sign-ups need the new code.', { danger: false, confirmLabel: 'Change code' }))) return;
     setBusy(true);
@@ -136,7 +136,7 @@ export default function SchoolPanel() {
           <div className="min-w-0 flex-1">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">School code</p>
             <p className="mt-1 font-mono text-3xl font-extrabold tracking-[.25em] text-brand-700 dark:text-brand-300">{school.code}</p>
-            <p className="mt-1 text-xs text-slate-500">Staff, parents and students use this to create their accounts in the EduNexa app.</p>
+            <p className="mt-1 text-xs text-slate-500">Staff, parents and students use this to create their accounts in the Skuuul-Line Pro app.</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" variant="secondary" icon={Copy} onClick={copy}>Copy invite</Button>

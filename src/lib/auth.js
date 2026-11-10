@@ -8,7 +8,7 @@ export const DEFAULT_PASSWORD = 'demo1234';
 export function hashPassword(pw) {
   let h1 = 0x811c9dc5;
   let h2 = 0x1000193;
-  const s = `edunexa:${pw}`;
+  const s = `skuuulline:${pw}`;
   for (let i = 0; i < s.length; i++) {
     h1 = Math.imul(h1 ^ s.charCodeAt(i), 16777619) >>> 0;
     h2 = Math.imul(h2 + s.charCodeAt(i), 2246822519) >>> 0;

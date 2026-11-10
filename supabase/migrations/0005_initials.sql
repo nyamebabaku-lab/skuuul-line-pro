@@ -1,13 +1,13 @@
 -- Staff numbers created on approval use the school's initials (e.g. BSA/ST/004).
-create or replace function edunexa.school_initials(sid uuid) returns text language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.school_initials(sid uuid) returns text language sql stable security definer set search_path = skuuulline as $$
   select coalesce(nullif(upper(trim(s.settings->>'initials')), ''),
     nullif(left(upper((select string_agg(left(w, 1), '') from regexp_split_to_table(regexp_replace(s.name, '[^A-Za-z0-9 ]', ' ', 'g'), '\s+') w
       where w <> '' and lower(w) not in ('of', 'the', 'and', 'for', 'de', 'la'))), 5), ''), 'SCH')
   from schools s where s.id = sid;
 $$;
 
-create or replace function edunexa.link_account(t edunexa.profiles) returns text
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.link_account(t skuuulline.profiles) returns text
+language plpgsql security definer set search_path = skuuulline as $$
 declare link text; stu records; first text; last text; label text; n int;
 begin
   if t.linked_id is not null or t.role in ('superadmin', 'admin', 'kiosk') then return t.linked_id; end if;
@@ -29,7 +29,7 @@ begin
   if t.role = 'student' then return t.match_id; end if;
   -- staff roles
   select id into link from records where school_id = t.school_id and col = 'staff' and (
-    (t.email is not null and t.email not like '%@phone.edunexa.app' and lower(data->>'email') = lower(t.email))
+    (t.email is not null and t.email not like '%@phone.skuuulline.app' and lower(data->>'email') = lower(t.email))
     or (length(regexp_replace(coalesce(t.phone, ''), '\D', '', 'g')) >= 9
         and right(regexp_replace(coalesce(data->>'phone', ''), '\D', '', 'g'), 9) = right(regexp_replace(t.phone, '\D', '', 'g'), 9)))
     and not exists (select 1 from profiles o where o.school_id = t.school_id and o.linked_id = records.id and o.user_id <> t.user_id)
@@ -43,7 +43,7 @@ begin
   insert into records (school_id, col, id, data) values (t.school_id, 'staff', link, jsonb_build_object(
     'id', link, 'staffNo', school_initials(t.school_id) || '/ST/' || lpad(n::text, 3, '0'), 'title', '', 'firstName', first, 'lastName', coalesce(last, ''),
     'gender', '', 'role', label, 'department', case when t.role in ('teacher', 'headteacher') then 'Academic' else label end,
-    'phone', coalesce(t.phone, ''), 'email', case when t.email like '%@phone.edunexa.app' then '' else coalesce(t.email, '') end,
+    'phone', coalesce(t.phone, ''), 'email', case when t.email like '%@phone.skuuulline.app' then '' else coalesce(t.email, '') end,
     'qualification', '', 'salary', 0, 'allowances', 0, 'dateJoined', to_char(now(), 'YYYY-MM-DD'), 'status', 'Active',
     'ssnitNo', '', 'bank', '', 'accountNo', ''));
   return link;

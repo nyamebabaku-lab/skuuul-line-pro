@@ -51,28 +51,28 @@ jobs:
             echo "No GOOGLE_SERVICES_JSON secret: building without push"
           fi
 
-      - name: EduNexa (teachers, parents, students and staff)
+      - name: Skuuul-Line Pro (teachers, parents, students and staff)
         run: |
           VITE_APP=main OUT_DIR=build/main npx vite build
           APP=main npx cap sync android
           cd android && chmod +x gradlew && ./gradlew --no-daemon assembleRelease bundleRelease
-          cp app/build/outputs/apk/release/app-release.apk ../EduNexa.apk
-          cp app/build/outputs/bundle/release/app-release.aab ../EduNexa.aab
+          cp app/build/outputs/apk/release/app-release.apk ../Skuuul-Line-Pro.apk
+          cp app/build/outputs/bundle/release/app-release.aab ../Skuuul-Line-Pro.aab
 
-      - name: EduNexa Admin (school owners and Super Admin)
+      - name: Skuuul-Line Pro Admin (school owners and Super Admin)
         run: |
           VITE_APP=admin OUT_DIR=build/admin npx vite build
           APP=admin npx cap sync android
           cd android-admin && chmod +x gradlew && ./gradlew --no-daemon assembleRelease bundleRelease
-          cp app/build/outputs/apk/release/app-release.apk ../EduNexa-Admin.apk
-          cp app/build/outputs/bundle/release/app-release.aab ../EduNexa-Admin.aab
+          cp app/build/outputs/apk/release/app-release.apk ../Skuuul-Line-Pro-Admin.apk
+          cp app/build/outputs/bundle/release/app-release.aab ../Skuuul-Line-Pro-Admin.aab
 
       - name: Publish release (download links always point to the newest)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="android-v1.0.${{ github.run_number }}"
-          gh release create "$TAG" EduNexa.apk EduNexa-Admin.apk EduNexa.aab EduNexa-Admin.aab \
-            --title "EduNexa Android 1.0.${{ github.run_number }}" \
-            --notes "EduNexa.apk — teachers, parents, students, head teacher, accountant, librarian, storekeeper, transport, canteen, hostel, support staff and gate kiosk. EduNexa-Admin.apk — school Owner/Admin and the EduNexa Super Admin. Allow 'Install unknown apps' when asked. The .aab files are for the Google Play Store." \
+          gh release create "$TAG" Skuuul-Line-Pro.apk Skuuul-Line-Pro-Admin.apk Skuuul-Line-Pro.aab Skuuul-Line-Pro-Admin.aab \
+            --title "Skuuul-Line Pro Android 1.0.${{ github.run_number }}" \
+            --notes "Skuuul-Line-Pro.apk — teachers, parents, students, head teacher, accountant, librarian, storekeeper, transport, canteen, hostel, support staff and gate kiosk. Skuuul-Line-Pro-Admin.apk — school Owner/Admin and the Skuuul-Line Pro Super Admin. Allow 'Install unknown apps' when asked. The .aab files are for the Google Play Store." \
             --latest

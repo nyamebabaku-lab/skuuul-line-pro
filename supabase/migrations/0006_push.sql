@@ -1,27 +1,27 @@
--- Phone push notifications (Firebase Cloud Messaging) for the EduNexa and EduNexa Admin apps.
--- Database triggers turn school events into rows in edunexa.notifications; a statement trigger hands each
--- batch to the edunexa-push Edge Function (via pg_net), which sends them with FCM.
+-- Phone push notifications (Firebase Cloud Messaging) for the Skuuul-Line Pro and Skuuul-Line Pro Admin apps.
+-- Database triggers turn school events into rows in skuuulline.notifications; a statement trigger hands each
+-- batch to the skuuulline-push Edge Function (via pg_net), which sends them with FCM.
 
 create extension if not exists pg_net with schema extensions;
 
-alter table edunexa.config add column if not exists push_secret text not null default encode(extensions.gen_random_bytes(24), 'hex');
-alter table edunexa.config add column if not exists push_url text not null default 'https://jepkzvunetajsgscoelv.supabase.co/functions/v1/edunexa-push';
+alter table skuuulline.config add column if not exists push_secret text not null default encode(extensions.gen_random_bytes(24), 'hex');
+alter table skuuulline.config add column if not exists push_url text not null default 'https://jepkzvunetajsgscoelv.supabase.co/functions/v1/skuuulline-push';
 
-create table if not exists edunexa.push_tokens (
+create table if not exists skuuulline.push_tokens (
   token text primary key,
   user_id uuid not null references auth.users on delete cascade,
   app text not null default 'main',
   platform text not null default 'android',
   updated_at timestamptz not null default now()
 );
-create index if not exists push_tokens_user on edunexa.push_tokens (user_id);
-alter table edunexa.push_tokens enable row level security;
+create index if not exists push_tokens_user on skuuulline.push_tokens (user_id);
+alter table skuuulline.push_tokens enable row level security;
 
-create table if not exists edunexa.notifications (
+create table if not exists skuuulline.notifications (
   id bigint generated always as identity primary key,
   created_at timestamptz not null default now(),
   user_id uuid not null references auth.users on delete cascade,
-  school_id uuid references edunexa.schools on delete cascade,
+  school_id uuid references skuuulline.schools on delete cascade,
   kind text not null,
   title text not null,
   body text,
@@ -31,69 +31,69 @@ create table if not exists edunexa.notifications (
   read_at timestamptz,
   unique (user_id, dedupe)
 );
-create index if not exists notifications_user on edunexa.notifications (user_id, created_at desc);
-alter table edunexa.notifications enable row level security;
-drop policy if exists notifications_own on edunexa.notifications;
-create policy notifications_own on edunexa.notifications for select to authenticated using (user_id = auth.uid());
-drop policy if exists notifications_mark on edunexa.notifications;
-create policy notifications_mark on edunexa.notifications for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
-grant select, update (read_at) on edunexa.notifications to authenticated;
-grant all on edunexa.push_tokens, edunexa.notifications to service_role;
+create index if not exists notifications_user on skuuulline.notifications (user_id, created_at desc);
+alter table skuuulline.notifications enable row level security;
+drop policy if exists notifications_own on skuuulline.notifications;
+create policy notifications_own on skuuulline.notifications for select to authenticated using (user_id = auth.uid());
+drop policy if exists notifications_mark on skuuulline.notifications;
+create policy notifications_mark on skuuulline.notifications for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+grant select, update (read_at) on skuuulline.notifications to authenticated;
+grant all on skuuulline.push_tokens, skuuulline.notifications to service_role;
 
 do $$ begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
-     and not exists (select 1 from pg_publication_tables where schemaname = 'edunexa' and tablename = 'notifications') then
-    alter publication supabase_realtime add table edunexa.notifications;
+     and not exists (select 1 from pg_publication_tables where schemaname = 'skuuulline' and tablename = 'notifications') then
+    alter publication supabase_realtime add table skuuulline.notifications;
   end if;
 end $$;
 
 -- The app registers the phone's FCM token after sign-in.
-create or replace function edunexa.save_push_token(token text, app text default 'main', platform text default 'android') returns void
-language sql security definer set search_path = edunexa as $$
+create or replace function skuuulline.save_push_token(token text, app text default 'main', platform text default 'android') returns void
+language sql security definer set search_path = skuuulline as $$
   insert into push_tokens (token, user_id, app, platform) values (token, auth.uid(), app, platform)
   on conflict (token) do update set user_id = auth.uid(), app = excluded.app, platform = excluded.platform, updated_at = now();
 $$;
-create or replace function edunexa.drop_push_token(token text) returns void
-language sql security definer set search_path = edunexa as $$
+create or replace function skuuulline.drop_push_token(token text) returns void
+language sql security definer set search_path = skuuulline as $$
   delete from push_tokens where push_tokens.token = drop_push_token.token and user_id = auth.uid();
 $$;
-revoke execute on function edunexa.save_push_token(text, text, text), edunexa.drop_push_token(text) from public;
-grant execute on function edunexa.save_push_token(text, text, text), edunexa.drop_push_token(text) to authenticated;
+revoke execute on function skuuulline.save_push_token(text, text, text), skuuulline.drop_push_token(text) from public;
+grant execute on function skuuulline.save_push_token(text, text, text), skuuulline.drop_push_token(text) to authenticated;
 
 -- ---------------------------------------------------------------- who to tell
-create or replace function edunexa.notify(users uuid[], sid uuid, kind text, title text, body text, link text, dedupe text default null)
-returns void language sql security definer set search_path = edunexa as $$
+create or replace function skuuulline.notify(users uuid[], sid uuid, kind text, title text, body text, link text, dedupe text default null)
+returns void language sql security definer set search_path = skuuulline as $$
   insert into notifications (user_id, school_id, kind, title, body, link, dedupe)
   select distinct u, sid, kind, left(title, 120), left(body, 300), link, dedupe from unnest(users) u where u is not null
   on conflict (user_id, dedupe) do nothing;
 $$;
 
 -- Accounts (active) that follow a student: the student and the parent(s).
-create or replace function edunexa.family_of(sid uuid, student_id text, with_student boolean default true) returns uuid[]
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.family_of(sid uuid, student_id text, with_student boolean default true) returns uuid[]
+language sql stable security definer set search_path = skuuulline as $$
   select coalesce(array_agg(p.user_id), '{}') from profiles p
   where p.school_id = sid and p.status = 'active' and (
     (p.role = 'parent' and p.linked_id = (select data->>'parentId' from records where school_id = sid and col = 'students' and id = student_id))
     or (with_student and p.role = 'student' and p.linked_id = student_id));
 $$;
-create or replace function edunexa.class_families(sid uuid, class_id text) returns uuid[]
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.class_families(sid uuid, class_id text) returns uuid[]
+language sql stable security definer set search_path = skuuulline as $$
   select coalesce(array_agg(distinct p.user_id), '{}') from records s
   join profiles p on p.school_id = sid and p.status = 'active'
     and ((p.role = 'student' and p.linked_id = s.id) or (p.role = 'parent' and p.linked_id = s.data->>'parentId'))
   where s.school_id = sid and s.col = 'students' and s.data->>'classId' = class_id and coalesce(s.data->>'status', 'Active') = 'Active';
 $$;
-create or replace function edunexa.school_members(sid uuid, roles text[] default null) returns uuid[]
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.school_members(sid uuid, roles text[] default null) returns uuid[]
+language sql stable security definer set search_path = skuuulline as $$
   select coalesce(array_agg(user_id), '{}') from profiles where school_id = sid and status = 'active' and role <> 'kiosk' and (roles is null or role = any (roles));
 $$;
-create or replace function edunexa.student_first(sid uuid, student_id text) returns text
-language sql stable security definer set search_path = edunexa as $$
+create or replace function skuuulline.student_first(sid uuid, student_id text) returns text
+language sql stable security definer set search_path = skuuulline as $$
   select coalesce(data->>'firstName', 'Your ward') from records where school_id = sid and col = 'students' and id = student_id;
 $$;
 
-create or replace function edunexa.push_on_record() returns trigger
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.push_on_record() returns trigger
+language plpgsql security definer set search_path = skuuulline as $$
 declare d jsonb := new.data; o jsonb := case when tg_op = 'UPDATE' then old.data else null end;
   sname text; who text; k text; v text; ids uuid[];
 begin
@@ -158,12 +158,12 @@ exception when others then
   return null; -- notifications must never block saving school records
 end $$;
 
-drop trigger if exists records_push on edunexa.records;
-create trigger records_push after insert or update on edunexa.records for each row execute function edunexa.push_on_record();
+drop trigger if exists records_push on skuuulline.records;
+create trigger records_push after insert or update on skuuulline.records for each row execute function skuuulline.push_on_record();
 
 -- Accounts: new sign-ups tell whoever approves; status changes tell the person.
-create or replace function edunexa.push_on_profile() returns trigger
-language plpgsql security definer set search_path = edunexa as $$
+create or replace function skuuulline.push_on_profile() returns trigger
+language plpgsql security definer set search_path = skuuulline as $$
 declare sname text; approvers uuid[];
 begin
   select name into sname from schools where id = new.school_id;
@@ -178,19 +178,19 @@ begin
   elsif tg_op = 'UPDATE' and new.status <> old.status then
     perform notify(array[new.user_id], new.school_id, 'account',
       case new.status when 'active' then 'Your account is approved ✅' when 'suspended' then 'Your account is suspended' when 'deactivated' then 'Your account is deactivated' else 'Account update' end,
-      case new.status when 'active' then 'Welcome to ' || coalesce(sname, 'EduNexa') || '. Open the app to get started.' else coalesce(new.status_reason, 'Contact your school for details.') end,
+      case new.status when 'active' then 'Welcome to ' || coalesce(sname, 'Skuuul-Line Pro') || '. Open the app to get started.' else coalesce(new.status_reason, 'Contact your school for details.') end,
       '/', 'status:' || new.user_id || ':' || new.status || ':' || to_char(now(), 'YYYYMMDDHH24MI'));
   end if;
   return null;
 exception when others then
   return null;
 end $$;
-drop trigger if exists profiles_push on edunexa.profiles;
-create trigger profiles_push after insert or update on edunexa.profiles for each row execute function edunexa.push_on_profile();
+drop trigger if exists profiles_push on skuuulline.profiles;
+create trigger profiles_push after insert or update on skuuulline.profiles for each row execute function skuuulline.push_on_profile();
 
 -- Hand every new batch of notifications to the Edge Function (asynchronously; never blocks the write).
-create or replace function edunexa.push_dispatch() returns trigger
-language plpgsql security definer set search_path = edunexa, extensions as $$
+create or replace function skuuulline.push_dispatch() returns trigger
+language plpgsql security definer set search_path = skuuulline, extensions as $$
 declare ids bigint[]; c config;
 begin
   select array_agg(id) into ids from new_rows;
@@ -202,6 +202,6 @@ begin
 exception when others then
   return null; -- a push problem must never undo the school's work
 end $$;
-drop trigger if exists notifications_dispatch on edunexa.notifications;
-create trigger notifications_dispatch after insert on edunexa.notifications referencing new table as new_rows
-  for each statement execute function edunexa.push_dispatch();
+drop trigger if exists notifications_dispatch on skuuulline.notifications;
+create trigger notifications_dispatch after insert on skuuulline.notifications referencing new table as new_rows
+  for each statement execute function skuuulline.push_dispatch();
