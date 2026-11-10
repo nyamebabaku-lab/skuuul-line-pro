@@ -31,9 +31,9 @@ em.blue{color:var(--blue)}
 .sub{margin-top:26px;font-size:32px;line-height:1.35;font-weight:500;color:var(--muted)}
 .sub.white{color:rgba(255,255,255,.82)}
 .cta{position:absolute;left:72px;right:72px;bottom:64px;display:flex;align-items:center;justify-content:space-between;z-index:10}
-.btn{display:inline-flex;align-items:center;gap:12px;font-size:28px;font-weight:800;padding:20px 30px;border-radius:999px;box-shadow:0 18px 36px -12px rgba(10,19,48,.55)}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:12px;font-size:28px;font-weight:800;padding:20px 30px;border-radius:999px;box-shadow:0 18px 36px -12px rgba(10,19,48,.55)}
 .btn.red{background:var(--red);color:#fff}.btn.blue{background:var(--blue);color:#fff}.btn.white{background:#fff;color:var(--blue)}
-.url{font-size:24px;font-weight:700;padding:14px 20px;border-radius:14px;background:rgba(255,255,255,.92);color:var(--ink);box-shadow:0 10px 24px -10px rgba(10,19,48,.4)}
+.url{white-space:nowrap;font-size:21px;font-weight:700;padding:14px 20px;border-radius:14px;background:rgba(255,255,255,.92);color:var(--ink);box-shadow:0 10px 24px -10px rgba(10,19,48,.4)}
 .phone{position:absolute;aspect-ratio:390/844;border-radius:52px;background:#0a0f1f;padding:12px;box-shadow:0 50px 90px -30px rgba(6,12,34,.65),0 0 0 2px rgba(255,255,255,.06) inset;z-index:3}
 .phone .scr{width:100%;height:100%;border-radius:41px;background-size:cover;background-position:top center}
 .phone .notch{position:absolute;top:22px;left:50%;width:30%;height:26px;margin-left:-15%;background:#0a0f1f;border-radius:20px}

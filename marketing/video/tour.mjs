@@ -1,7 +1,7 @@
 // Skuuul-Line Pro "What's new" tour video: drives the demo app with a visible pointer and on-screen captions, recorded by Playwright.
 import { chromium } from 'playwright-core';
 import { mkdirSync, readdirSync, renameSync } from 'fs';
-const BASE = 'http://localhost:4173/demo/';
+const BASE = 'http://127.0.0.1:4173/demo/';
 const OUT = new URL('./out/', import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 const W = 1280, H = 720;
@@ -91,10 +91,21 @@ async function type(loc, text, pause = 300) {
   await wait(pause);
 }
 const dlg = () => p.getByRole('dialog').last();
+// Fonts come from Google Fonts: wait for them so every frame uses the real typeface.
+async function fonts() {
+  for (let i = 0; i < 20; i++) {
+    const n = await p.evaluate(async () => (await document.fonts.load('800 24px "Plus Jakarta Sans"')).length).catch(() => 0);
+    if (n > 0) return;
+    await wait(500);
+  }
+}
 async function as(label) {
-  await p.evaluate(() => { const k = 'skuuulline-session'; const c = JSON.parse(localStorage.getItem(k) || '{"state":{}}'); c.state.userId = null; localStorage.setItem(k, JSON.stringify(c)); });
-  await p.goto(BASE + '#/');
-  await p.reload();
+  // Sign out and reload in one step, so the running app can't save the old person back in between.
+  await Promise.all([
+    p.waitForEvent('load'),
+    p.evaluate(() => { const k = 'skuuulline-session'; const c = JSON.parse(localStorage.getItem(k) || '{"state":{}}'); c.state.userId = null; localStorage.setItem(k, JSON.stringify(c)); location.hash = '#/'; location.reload(); }),
+  ]);
+  await fonts();
   await wait(700);
   await cap(`Signing in as the ${label === 'Parent' ? 'parent' : label === 'Bus Attendant' ? 'bus attendant' : label}`, 'Every role gets its own view of the app', 'DEMO');
   await wait(1500);
@@ -113,6 +124,7 @@ const LOGO = '<svg width="96" height="96" viewBox="0 0 100 100"><defs><linearGra
 
 // ---------------------------------------------------------------- intro
 await p.goto(BASE);
+await fonts();
 await card(`${LOGO}<h1>Skuuul-Line <b>Pro</b> — what's new</h1><p>The complete school app for Ghanaian schools</p><ul><li>Live school bus tracking</li><li>Exam timetables</li><li>Smart timetables</li><li>Fair, flexible billing</li><li>Parents link their own children</li><li>Teacher-only marks & live classes</li></ul>`);
 await wait(5200);
 await card(null);

@@ -1,7 +1,7 @@
 // Vertical (9:16) ~60 s "What's new" clip for WhatsApp Status / TikTok / Reels, recorded in the app's phone layout.
 import { chromium } from 'playwright-core';
 import { mkdirSync, readdirSync, renameSync, rmSync, readFileSync, writeFileSync } from 'fs';
-const BASE = 'http://localhost:4173/demo/';
+const BASE = 'http://127.0.0.1:4173/demo/';
 const OUT = new URL('./short/', import.meta.url).pathname;
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });

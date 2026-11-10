@@ -1,6 +1,6 @@
 // Captures crisp screenshots of real Skuuul-Line Pro screens for the ad flyers.
 import { chromium } from 'playwright-core';
-const BASE = 'http://localhost:4173/';
+const BASE = 'http://127.0.0.1:4173/demo/';
 const EXE = process.env.HOME + '/.cache/ms-playwright/chromium-1148/chrome-linux/chrome';
 const OUT = new URL('./shots/', import.meta.url).pathname;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

@@ -2,7 +2,7 @@
 // Uses the demo build from `vite preview` (port 4173) with a running bus trip prepared first.
 import { chromium } from 'playwright-core';
 import { mkdirSync } from 'fs';
-const BASE = 'http://localhost:4173/demo/';
+const BASE = 'http://127.0.0.1:4173/demo/';
 const EXE = process.env.HOME + '/.cache/ms-playwright/chromium-1148/chrome-linux/chrome';
 const OUT = new URL('./shots/', import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
