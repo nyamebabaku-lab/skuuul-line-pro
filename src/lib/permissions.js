@@ -2,7 +2,7 @@ import {
   LayoutDashboard, UserPlus, GraduationCap, Users, BriefcaseBusiness, School, CalendarClock, ClipboardCheck,
   BookOpenCheck, FileBadge, MonitorPlay, Wallet, Banknote, Bus, Library, Package, BedDouble, HeartPulse,
   MessagesSquare, CalendarDays, BarChart3, Settings, Award, Receipt, CalendarCheck, UtensilsCrossed, ScanLine, DoorOpen, Video,
-  UserCheck, Building2, QrCode, FileSpreadsheet, NotebookPen } from 'lucide-react';
+  UserCheck, Building2, QrCode, FileSpreadsheet, NotebookPen, Mic } from 'lucide-react';
 import { LIVE } from '../config';
 
 export const ROLES = {
@@ -91,6 +91,7 @@ export const NAV = [
     items: [
       { key: 'schools', label: 'Schools', path: '/schools', icon: Building2, roles: ['superadmin'], live: true },
       { key: 'accounts', label: 'Accounts', path: '/accounts', icon: UserCheck, roles: ['admin', 'superadmin'], live: true },
+      { key: 'studio', label: 'Record Studio', path: '/studio', icon: Mic, roles: ['superadmin'], live: true },
     ],
   },
   {
@@ -143,7 +144,7 @@ export const MOBILE_TABS = {
   storekeeper: ['dashboard', 'store', 'communication', 'calendar'],
   transport: ['dashboard', 'transport', 'communication', 'calendar'],
   canteen: ['dashboard', 'canteen', 'reports', 'communication'],
-  superadmin: LIVE ? ['dashboard', 'schools', 'accounts'] : ['dashboard', 'settings', 'students', 'finance'],
+  superadmin: LIVE ? ['dashboard', 'schools', 'accounts', 'studio'] : ['dashboard', 'settings', 'students', 'finance'],
   headteacher: ['dashboard', 'students', 'attendance', 'reportcards'],
   hostel: ['dashboard', 'hostel', 'communication', 'calendar'],
   kiosk: ['dashboard'],

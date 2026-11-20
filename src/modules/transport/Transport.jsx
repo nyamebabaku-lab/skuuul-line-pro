@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Bus, MapPin, Clock, Phone, Users, Wrench, UserPlus, X, Route as RouteIcon, Plus, Pencil, Trash2, ArrowUp, ArrowDown, Navigation, School, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Bus, MapPin, Clock, Phone, Users, Wrench, UserPlus, X, Route as RouteIcon, Plus, Pencil, Trash2, ArrowUp, ArrowDown, Navigation, School, CheckCircle2, Volume2, Play } from 'lucide-react';
+import { voiceChoices, getVoice, setVoice, playClip } from '../../lib/busVoice';
 import { useDB } from '../../data/store';
 import { useLookups, useCurrentUser, usePortalStudent, TODAY } from '../../data/selectors';
 import { fmtDate, money, fullName, daysBetween, uid } from '../../lib/format';
@@ -18,6 +19,37 @@ const ago = (iso) => {
 };
 
 // ---------------------------------------------------------------- parents
+/** Off or a published language (from the Record Studio) for spoken bus alerts, with a sample to hear. */
+function SpokenAlerts() {
+  const [voice, setV] = useState(getVoice);
+  const [choices, setChoices] = useState([{ value: 'off', label: 'Off (text only)' }, { value: 'en', label: 'English' }]);
+  useEffect(() => {
+    let on = true;
+    voiceChoices().then((c) => on && setChoices(c)).catch(() => {});
+    return () => { on = false; };
+  }, []);
+  const pick = (v) => {
+    setV(v);
+    setVoice(v);
+    if (v !== 'off') playClip('bus_near', v);
+  };
+  return (
+    <div className="border-t border-slate-100 px-5 py-4 dark:border-white/10">
+      <p className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white"><Volume2 className="h-4 w-4 text-brand-600" /> Spoken bus alerts</p>
+      <p className="mt-1 text-xs text-slate-500">The phone says the alert out loud, e.g. "The school bus is about five minutes away".</p>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {choices.map((v) => (
+          <button key={v.value} type="button" onClick={() => pick(v.value)} aria-pressed={voice === v.value}
+            className={cx('rounded-full border px-3 py-1.5 text-sm font-semibold transition', voice === v.value ? 'border-brand-600 bg-brand-600 text-white' : 'border-slate-200 text-slate-700 hover:border-brand-400 dark:border-white/15 dark:text-slate-200')}>
+            {v.label}
+          </button>
+        ))}
+        {voice !== 'off' && <Button size="sm" variant="soft" icon={Play} onClick={() => playClip('bus_near', voice)}>Hear it</Button>}
+      </div>
+    </div>
+  );
+}
+
 function ParentBus() {
   const db = useDB();
   const { student } = usePortalStudent();
@@ -55,6 +87,7 @@ function ParentBus() {
               <LiveMap buses={run?.pos ? [{ id: run.trip.busId, lat: run.pos.lat, lng: run.pos.lng, label: bus?.regNo || 'Bus', mine: true }] : []} routes={[route]} myStopId={myStop?.id} height={380} />
             </div>
             <p className="px-5 pb-4 text-xs text-slate-500">You get a notification when the bus is about 5 minutes from your stop, when {student.firstName} gets on, and when {student.firstName} is dropped off.</p>
+            <SpokenAlerts />
           </Card>
           <div className="space-y-6">
             <Card>

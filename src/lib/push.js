@@ -3,6 +3,7 @@
 import { IS_NATIVE, ADMIN_APP } from '../config';
 import { supabase } from './supabase';
 import { toast } from '../components/ui';
+import { syncVoice } from './busVoice';
 
 export const PUSH_READY = IS_NATIVE && import.meta.env.VITE_PUSH === '1';
 let started = false;
@@ -17,6 +18,7 @@ export async function startPush(navigate) {
   PushNotifications.addListener('registration', async ({ value }) => {
     myToken = value;
     await supabase.rpc('save_push_token', { token: value, app: ADMIN_APP ? 'admin' : 'main', platform: 'android' });
+    if (!ADMIN_APP) syncVoice(value); // spoken bus alerts: build this phone's voice channels
   });
   PushNotifications.addListener('registrationError', (e) => console.warn('push registration', e));
   // App open: show it inside the app (Android doesn't put it in the tray while the app is in front).

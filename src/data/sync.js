@@ -9,6 +9,7 @@ import { ADMIN_APP, storeKey, PHONE_DOMAIN } from '../config';
 import { setServerPhotos, clearPhotos } from './photos';
 import { toast } from '../components/ui';
 import { startPush, stopPush } from '../lib/push';
+import { speakAlert } from '../lib/busVoice';
 
 /**
  * phase: 'loading' | 'signedOut' | 'noProfile' | 'waiting' | 'wrongApp' | 'ready'
@@ -220,6 +221,7 @@ function subscribe(profile) {
     });
   ch.on('postgres_changes', { event: 'INSERT', schema: 'skuuulline', table: 'notifications', filter: `user_id=eq.${profile.user_id}` }, (ev) => {
     L({ notifications: [ev.new, ...useLive.getState().notifications].slice(0, 100) });
+    speakAlert(ev.new).catch(() => {});
   });
   ch.on('postgres_changes', { event: '*', schema: 'skuuulline', table: 'profiles' }, (ev) => {
     if ((ev.new?.user_id || ev.old?.user_id) === profile.user_id) return refresh();

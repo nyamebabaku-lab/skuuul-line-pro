@@ -41,7 +41,19 @@ async function accessToken() {
   return cached.token;
 }
 
-async function send(token: string, n: Record<string, string | null>) {
+// Bus alerts go to a spoken channel when the phone installed a voice: the phone built one Android channel per
+// clip from the Record Studio's published clips (v_<clip>_<lang>_<rev>), each playing that recording.
+// Everything else uses the normal 'school' channel.
+const SPOKEN = ['bus_left', 'bus_board', 'bus_near', 'bus_drop'];
+type Voice = { voice: string | null; voice_rev: number | null };
+function channelFor(n: Record<string, string | null>, v: Voice | undefined) {
+  if (!v?.voice || !v.voice_rev || !SPOKEN.includes(n.kind ?? '')) return 'school';
+  const clip = n.kind === 'bus_drop' && / arrived at school$/.test(n.title ?? '') ? 'bus_arrived' : n.kind;
+  return `v_${clip}_${v.voice}_${v.voice_rev}`;
+}
+
+async function send(token: string, n: Record<string, string | null>, voice?: Voice) {
+  const channel = channelFor(n, voice);
   const res = await fetch(`https://fcm.googleapis.com/v1/projects/${SA.project_id}/messages:send`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${await accessToken()}`, 'Content-Type': 'application/json' },
@@ -50,7 +62,7 @@ async function send(token: string, n: Record<string, string | null>) {
         token,
         notification: { title: n.title, body: n.body ?? '' },
         data: { link: n.link ?? '/', kind: n.kind ?? '', id: String(n.id) },
-        android: { priority: 'HIGH', notification: { channel_id: 'school', sound: 'default', default_vibrate_timings: true } },
+        android: { priority: 'HIGH', notification: { channel_id: channel, sound: 'default', default_vibrate_timings: true } },
       },
     }),
   });
@@ -70,15 +82,19 @@ Deno.serve(async (req) => {
   const { data: rows } = await db.from('notifications').select('*').in('id', ids.slice(0, 2000)).is('sent_at', null);
   const users = [...new Set((rows ?? []).map((r: { user_id: string }) => r.user_id))];
   if (!users.length) return Response.json({ ok: true, sent: 0 });
-  const { data: tokens } = await db.from('push_tokens').select('token, user_id').in('user_id', users);
+  const { data: tokens } = await db.from('push_tokens').select('token, user_id, voice, voice_rev').in('user_id', users);
   const byUser = new Map<string, string[]>();
-  (tokens ?? []).forEach((t: { token: string; user_id: string }) => byUser.set(t.user_id, [...(byUser.get(t.user_id) ?? []), t.token]));
+  const voiceOf = new Map<string, Voice>();
+  (tokens ?? []).forEach((t: { token: string; user_id: string } & Voice) => {
+    byUser.set(t.user_id, [...(byUser.get(t.user_id) ?? []), t.token]);
+    voiceOf.set(t.token, { voice: t.voice, voice_rev: t.voice_rev });
+  });
 
   let sent = 0;
   const dead: string[] = [];
   const jobs = (rows ?? []).flatMap((n: Record<string, string>) => (byUser.get(n.user_id) ?? []).map((tok) => [n, tok] as const));
   for (let i = 0; i < jobs.length; i += 20) {
-    const results = await Promise.all(jobs.slice(i, i + 20).map(([n, tok]) => send(tok, n).then((r) => [tok, r] as const)));
+    const results = await Promise.all(jobs.slice(i, i + 20).map(([n, tok]) => send(tok, n, voiceOf.get(tok)).then((r) => [tok, r] as const)));
     results.forEach(([tok, r]) => (r === 'ok' ? sent++ : r === 'dead' && dead.push(tok)));
   }
   if (dead.length) await db.from('push_tokens').delete().in('token', dead);

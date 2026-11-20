@@ -52,6 +52,7 @@ const LiveClasses = lazy(() => import('./modules/live/LiveClasses'));
 const LiveRoom = lazy(() => import('./modules/live/LiveRoom'));
 const Accounts = lazy(() => import('./modules/accounts/Accounts'));
 const Schools = lazy(() => import('./modules/accounts/Schools'));
+const Studio = lazy(() => import('./modules/studio/Studio'));
 const Import = lazy(() => import('./modules/import/Import'));
 const Notifications = lazy(() => import('./modules/notifications/Notifications'));
 
@@ -164,6 +165,7 @@ export default function App() {
             <Route path="notifications" element={<Notifications />} />
             <Route path="accounts" element={<Guard k="accounts"><Accounts /></Guard>} />
             <Route path="schools" element={<Guard k="schools"><Schools /></Guard>} />
+            <Route path="studio" element={<Guard k="studio"><Studio /></Guard>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
